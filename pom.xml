@@ -13,15 +13,13 @@
         <module>runtime-record-core</module>
     </modules>
     <properties>
-        <revision>1.0.1</revision>
+        <revision>1.0.2</revision>
         <user.version>2.1.106</user.version>
-        <file.version>2.0.12-SNAPSHOT</file.version>
-        <passay.version>1.6.0</passay.version>
         <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
         <spring-cloud-alibaba.version>2.2.1.RELEASE</spring-cloud-alibaba.version>
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
         <thread-local.version>2.11.5</thread-local.version>
-        <basic.all.version>1.0.21</basic.all.version>
+        <basic.all.version>1.0.22</basic.all.version>
         <xerces.version>2.12.2</xerces.version>
         <poi.version>5.2.3</poi.version>
         <lang.version>3.9</lang.version>

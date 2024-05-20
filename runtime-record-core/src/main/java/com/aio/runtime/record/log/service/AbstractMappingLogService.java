@@ -14,7 +14,7 @@ public abstract class AbstractMappingLogService implements MappingLogService{
     public static BlockingQueue<MappingRecordBo> RECORD_QUEUE = new LinkedBlockingQueue<>(10000);;
 
     public AbstractMappingLogService(){
-        CronUtil.schedule("*/2 * * * * *", new Task() {
+        CronUtil.schedule("*/1 * * * * *", new Task() {
             @Override
             public void execute() {
                 List<MappingRecordBo> recordBos = drainTo();
