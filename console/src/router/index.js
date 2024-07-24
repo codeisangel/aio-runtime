@@ -46,7 +46,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/article/documentPage',
+    redirect: '/log/apiRecordPage',
     children: [{
       path: 'dashboard',
       name: 'Dashboard',
@@ -56,18 +56,34 @@ export const constantRoutes = [
   },
 
   {
-    path: '/article',
+    path: '/log',
     component: Layout,
-    redirect: '/example/articleHelp',
+    redirect: '/log/apiRecordPage',
     name: 'Example',
     meta: {title: '运行记录管理', icon: 'el-icon-s-help'},
     children: [
 
       {
-        path: 'documentPage',
-        name: 'documentPage',
-        component: () => import('@/views/table/ArticlePage'),
-        meta: {title: '接口访问记录', icon: 'table'}
+        path: 'apiRecordPage',
+        name: 'apiRecordPage',
+        component: () => import('@/views/log/QueryLogPage.vue'),
+        meta: {title: '接口访问记录', icon: 'el-icon-tickets'}
+      }
+    ]
+  },
+  {
+    path: '/subscribe',
+    component: Layout,
+    redirect: '/subscribe/apiRecordPage',
+    name: 'subscribe',
+    meta: {title: '订阅管理', icon: 'el-icon-s-help'},
+    children: [
+
+      {
+        path: 'logSubscribePage',
+        name: 'logSubscribePage',
+        component: () => import('@/views/log/QueryLogSubscribePage.vue'),
+        meta: {title: '日志订阅', icon: 'el-icon-notebook-1'}
       }
     ]
   },

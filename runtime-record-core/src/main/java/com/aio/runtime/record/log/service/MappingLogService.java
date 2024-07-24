@@ -13,4 +13,5 @@ public interface MappingLogService {
     List<MappingRecordBo> drainTo();
     void batchSave(List<MappingRecordBo> recordList) throws IOException;
     PageResult searchRecords(QueryRecordParams params, KgoPage page);
+    Object getRecordInfo();
 }

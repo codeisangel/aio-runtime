@@ -11,7 +11,7 @@ import org.springframework.context.annotation.PropertySource;
  * @date 2024/04/18
  */
 @Configuration
-@ComponentScan
+@ComponentScan("com.aio.runtime.record.log")
 @Slf4j
 @PropertySource("classpath:runtime-log-version.properties")
 public class RuntimeRecordConfig {

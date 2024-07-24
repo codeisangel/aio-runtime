@@ -120,14 +120,14 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <excludes>
-                    <exclude>user/fonts/**</exclude>
+                    <exclude>templates/runtime/console/fonts/**</exclude>
                 </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
                 <includes>
-                    <include>user/fonts/**</include>
+                    <include>templates/runtime/console/fonts/**</include>
                 </includes>
             </resource>
         </resources>

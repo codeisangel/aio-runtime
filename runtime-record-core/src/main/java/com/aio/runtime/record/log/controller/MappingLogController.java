@@ -28,4 +28,8 @@ public class MappingLogController {
         PageResult pageResult = mappingLogService.searchRecords(params,page);
         return AmisResult.success(pageResult);
     }
+    @GetMapping("info")
+    public AmisResult getRecordInfo(){
+        return AmisResult.success(mappingLogService.getRecordInfo());
+    }
 }

@@ -9,6 +9,7 @@ import cn.hutool.core.util.StrUtil;
 import com.aio.runtime.record.log.domain.MappingRecordBo;
 import com.aio.runtime.record.log.domain.MappingRecordVo;
 import com.aio.runtime.record.log.domain.QueryRecordParams;
+import com.aio.runtime.record.log.domain.RecordInfoVo;
 import com.aio.runtime.record.log.domain.constants.MappingLogFieldConstant;
 import com.aio.runtime.record.log.service.AbstractMappingLogService;
 import com.alibaba.fastjson.JSONObject;
@@ -128,6 +129,18 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
             throw new RuntimeException(e);
         }
         return pageResult;
+    }
+
+    @Override
+    public Object getRecordInfo() {
+        File file = FileUtil.file(projectWorkspace);
+        Path path = Paths.get(file.getAbsolutePath()).resolve(MAPPING_LOG_CATALOGUE_NAME);
+        File mappingFile = path.toFile();
+        long size = FileUtil.size(mappingFile);
+        long kbSize = size / 1024;
+        RecordInfoVo recordInfoVo = new RecordInfoVo();
+        recordInfoVo.setSize(kbSize);
+        return recordInfoVo;
     }
 
     private BooleanQuery.Builder builderQuery(QueryRecordParams params) {

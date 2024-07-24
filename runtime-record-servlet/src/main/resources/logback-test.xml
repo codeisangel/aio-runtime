@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="20 seconds">
 
-    <appender name="plumelog" class="com.aio.runtime.record.log.LogLearnAppender"></appender>
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>[ %d{HH:mm:ss.SSS} ] %cyan([%thread]) %yellow(%-5level)| %logger{120} :: %method | -  %blue(%msg)  %n</pattern>
@@ -9,7 +8,6 @@
     </appender>
     <!-- 控制台输出日志级别 -->
     <root level="INFO">
-        <appender-ref ref="plumelog"/>
         <appender-ref ref="Console"/>
     </root>
 </configuration>
