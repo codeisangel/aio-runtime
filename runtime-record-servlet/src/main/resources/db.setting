@@ -1,0 +1,3 @@
+showSql = true
+formatSql = true
+sqlLevel = debug

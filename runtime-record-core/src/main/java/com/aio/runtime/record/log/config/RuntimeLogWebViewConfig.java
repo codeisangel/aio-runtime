@@ -24,7 +24,6 @@ public class RuntimeLogWebViewConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addRedirectViewController("/view/runtime","/view/runtime/index.html");
-        registry.addRedirectViewController("/view/runtime/","/view/runtime/index.html");
     }
 }
 

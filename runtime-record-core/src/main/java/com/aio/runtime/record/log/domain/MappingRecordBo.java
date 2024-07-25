@@ -44,28 +44,6 @@ public class MappingRecordBo {
         } else {
             this.url = url;
         }
-
-    }
-
-    public void appendUrl(String url) {
-        if (StringUtils.isBlank(url)) {
-            return;
-        }
-        if (StringUtils.isBlank(this.url)) {
-            setBasicUrl(url);
-            return;
-        }
-
-        boolean prefix = StringUtils.startsWith(url, "/");
-        boolean suffix = StringUtils.endsWith(this.url, "/");
-        if ((!suffix) && (!prefix)) {
-            this.url = this.url + "/" + url;
-            return;
-        }
-
-        this.url = this.url + url;
-
-
     }
 
 }

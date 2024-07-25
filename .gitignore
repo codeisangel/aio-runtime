@@ -4,7 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-src/main/resources/templates/console/
+runtime-record-core/src/main/resources/templates/runtime/console/
 ### STS ###
 .apt_generated
 .classpath

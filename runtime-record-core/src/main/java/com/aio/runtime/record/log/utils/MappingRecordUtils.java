@@ -131,7 +131,7 @@ public class MappingRecordUtils {
         }
         Map<String,Object> paramMap = new HashMap<>();
         for (int i = 0; i < args.length; i++) {
-            if (ObjectUtil.isNull(parameterNames[i])){
+            if (ObjectUtil.isNull(parameterNames) || ObjectUtil.isNull(parameterNames[i])){
                 continue;
             }
             paramMap.put(parameterNames[i],ObjectUtil.isNull(args[i]) ? "null" : args[i].toString());

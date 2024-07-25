@@ -64,7 +64,7 @@
 
         <el-col :span="8">
           <el-form-item label="发生时间">
-            <el-date-picker v-model="createTimeRange" value-format="timestamp" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+            <el-date-picker v-model="createTimeRange" @change="queryTablePage" value-format="timestamp" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="createTimeRangeOptions"></el-date-picker>
           </el-form-item>
         </el-col>
 
@@ -95,7 +95,7 @@
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" min-width="160"></el-table-column>
       <el-table-column prop="companyName" label="企业名称" width="200"></el-table-column>
-      <el-table-column prop="userName" label="用户名称" width="200"></el-table-column>
+      <el-table-column prop="userName" label="用户名称" min-width="100" align="center"></el-table-column>
       <el-table-column prop="mappingMethod" label="关联方法" width="140"></el-table-column>
       <el-table-column fixed="right" label="操作" width="120" align="center">
         <template slot-scope="scope">
@@ -216,6 +216,42 @@ export default {
         createToTime:'',
       },
       createTimeRange:[],
+      createTimeRangeOptions:{
+        shortcuts: [{
+          text: '30分钟',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - (1000 * 60 * 30));
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近1小时',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - (1000 * 60 * 60));
+            picker.$emit('pick', [start, end]);
+          }
+        },  {
+          text: '最近一个周',
+          onClick(picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end]);
+          }
+        },
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          },]
+      },
       stackTraceCLass:'',
       documentDetailDialogVisible: false,
       currentRow:{
