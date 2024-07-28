@@ -133,6 +133,9 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
             if (StringUtils.isNotBlank(params.getMethodName())){
                 where.set(SubscribeFields.METHOD_NAME,StrUtil.format("like %{}%",params.getMethodName()));
             }
+            if (ObjectUtil.isNotNull(params.getHandleStatus())){
+                where.set(SubscribeFields.HANDLE_STATUS,params.getHandleStatus());
+            }
 
             if (StringUtils.isNotBlank(params.getUserId())){
                 where.set(SubscribeFields.USER_ID,params.getUserId());

@@ -35,8 +35,16 @@
               <el-input v-model="queryTable.subscribeName" @keyup.native.enter="queryTableBtn"></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="6">
+            <el-form-item label="处理状态">
+              <el-select v-model="queryTable.handleStatus" clearable placeholder="请选择处理状态" @change="queryTableBtn">
+                <el-option label="未处理" value="0"></el-option>
+                <el-option label="已处理" value="1"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
 
-        <el-col :offset="6" :span="4">
+        <el-col :span="4">
           <el-form-item>
             <el-button @click="clearQueryParamsBtn">清除</el-button>
             <el-button type="primary" @click="queryTableBtn">查询</el-button>
@@ -116,6 +124,7 @@ export default {
   data() {
     return {
       queryTable: {
+        handleStatus:'0',
         createFromTime: '',
         createToTime: '',
       },
@@ -209,6 +218,7 @@ export default {
       this.queryTable.className = ''
       this.queryTable.methodName=''
       this.queryTable.message=''
+      this.queryTable.handleStatus = ''
       this.queryTablePage()
     },
     updateSubscribeStatusToHandled(row){

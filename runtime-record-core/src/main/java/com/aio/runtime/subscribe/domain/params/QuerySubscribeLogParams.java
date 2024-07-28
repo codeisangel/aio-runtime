@@ -15,7 +15,7 @@ public class QuerySubscribeLogParams {
     private String methodName;
     private String userId;
     private String companyId;
-
+    private Integer handleStatus;
     private Long createFromTime;
     private Long createToTime;
 }
