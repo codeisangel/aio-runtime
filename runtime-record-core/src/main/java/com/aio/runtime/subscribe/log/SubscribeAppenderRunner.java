@@ -1,4 +1,4 @@
-package com.aio.runtime.record.log.subscribe;
+package com.aio.runtime.subscribe.log;
 
 import ch.qos.logback.classic.LoggerContext;
 import cn.hutool.core.date.DateUtil;

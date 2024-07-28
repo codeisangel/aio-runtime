@@ -2,7 +2,7 @@ package com.guodun.aio.document;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.RandomUtil;
-import com.aio.runtime.record.log.subscribe.SubscribeMarker;
+import com.aio.runtime.subscribe.log.SubscribeMarker;
 import com.kgo.flow.common.domain.amis.AmisResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

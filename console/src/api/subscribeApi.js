@@ -7,4 +7,11 @@ export function getSubscribeLogPageApi(data) {
     params:data
   })
 }
+export function updateSubscribeStatusApi(data) {
+  return request({
+    url: '/runtime/log/subscribe/handled',
+    method: 'post',
+    data
+  })
+}
 

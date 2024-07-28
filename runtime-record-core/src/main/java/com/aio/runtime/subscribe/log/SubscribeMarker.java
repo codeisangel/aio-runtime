@@ -1,4 +1,4 @@
-package com.aio.runtime.record.log.subscribe;
+package com.aio.runtime.subscribe.log;
 
 import org.slf4j.Marker;
 

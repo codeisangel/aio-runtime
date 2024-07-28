@@ -1,8 +1,10 @@
 package com.aio.runtime.record.log;
 
+import com.aio.runtime.subscribe.AioSubscribeConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
 /**
@@ -13,6 +15,7 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @ComponentScan({"com.aio.runtime.record.log","com.aio.runtime.environment","com.aio.runtime.mappings"})
 @Slf4j
+@Import({AioSubscribeConfig.class})
 @PropertySource("classpath:runtime-log-version.properties")
 public class RuntimeRecordConfig {
 

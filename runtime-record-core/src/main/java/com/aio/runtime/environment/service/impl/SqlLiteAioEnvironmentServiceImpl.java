@@ -10,9 +10,11 @@ import cn.hutool.db.Db;
 import cn.hutool.db.Entity;
 import cn.hutool.db.Page;
 import com.aio.runtime.environment.domain.EnvironmentItemBo;
+import com.aio.runtime.environment.domain.EnvironmentItemDictBo;
 import com.aio.runtime.environment.domain.QueryEnvironmentParams;
 import com.aio.runtime.environment.service.IAioEnvironmentService;
-import com.aio.runtime.record.log.subscribe.SubscribeMarker;
+import com.aio.runtime.subscribe.log.SubscribeMarker;
+import com.alibaba.fastjson.JSON;
 import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
 import com.kgo.flow.common.domain.page.KgoPage;
 import com.kgo.flow.common.domain.page.PageResult;
@@ -24,12 +26,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.env.EnvironmentEndpoint;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -55,10 +60,58 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
     @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
     private String projectWorkspace;
 
+    @Value("classpath:material/environment/environmentItem.json")
+    private Resource environmentItemFile;
+
     @Autowired(required = false)
     private EnvironmentEndpoint environmentEndpoint;
 
-    @PostConstruct
+    private Map<String,EnvironmentItemDictBo> environmentDictMap = new HashMap<>();
+    @EventListener
+    public void listenerApplicationReadyEvent(ApplicationReadyEvent event){
+        log.info("应用已经准备就绪-事件 ： {} ", DateUtil.now());
+        ThreadUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                // 读取字典
+                readDict();
+                // 初始化数据源
+                initDataSource();
+                // 读取环境配置
+                readEnvironments();
+            }
+        });
+
+    }
+
+    private void readDict(){
+        try {
+            File file = environmentItemFile.getFile();
+            String environmentDict = FileUtil.readUtf8String(file);
+            if (StringUtils.isBlank(environmentDict)){
+                return;
+            }
+            List<EnvironmentItemDictBo> dictList = JSON.parseArray(environmentDict, EnvironmentItemDictBo.class);
+            log.info("字典内容 ： {} ", JSON.toJSONString(dictList));
+            if (ObjectUtil.isEmpty(dictList)){
+                return;
+            }
+            for (EnvironmentItemDictBo dictBo : dictList) {
+                if (ObjectUtil.isEmpty(dictBo)){
+                    continue;
+                }
+                if (StringUtils.isBlank(dictBo.getKey())) {
+                    continue;
+                }
+                environmentDictMap.put(dictBo.getKey(),dictBo);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
+        }
+    }
+
     private void initDataSource(){
         if (!FileUtil.exist(projectWorkspace)) {
             FileUtil.mkdir(projectWorkspace);
@@ -118,11 +171,7 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
             throw new RuntimeException(e);
         }
     }
-    @EventListener
-    public void listenerApplicationReadyEvent(ApplicationReadyEvent event){
-        log.info("应用已经准备就绪-事件 ： {} ", DateUtil.now());
-        readEnvironments();
-    }
+
     @Override
     public void readEnvironments(){
         if (ObjectUtil.isNull(environmentEndpoint)){
@@ -162,20 +211,21 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
                 itemBoList.add(itemBo);
             }
         }
-        ThreadUtil.execute(new Runnable() {
-            @Override
-            public void run() {
-                batchSave(itemBoList);
-            }
-        });
+        batchSave(itemBoList);
+
 
     }
     public boolean updateProperty(EnvironmentItemBo itemBo){
         try {
+            EnvironmentItemDictBo dictBo = environmentDictMap.get(itemBo.getPropertyKey());
             Entity entity = Entity.create()
                     .set("property_value", itemBo.getPropertyValue())
                     .set("property_desc", itemBo.getPropertyDesc())
                     .set("property_type", itemBo.getPropertyType());
+
+            if (ObjectUtil.isNotEmpty(dictBo)){
+                entity.set(TableFields.PROPERTY_DESC,dictBo.getName());
+            }
 
             Entity where = Entity.create(TABLE_NAME)
                     .set("environment_group", itemBo.getEnvironmentGroup())

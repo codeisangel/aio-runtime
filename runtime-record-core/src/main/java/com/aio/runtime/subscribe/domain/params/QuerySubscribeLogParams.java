@@ -1,4 +1,4 @@
-package com.aio.runtime.record.log.subscribe.domain.params;
+package com.aio.runtime.subscribe.domain.params;
 
 import lombok.Data;
 

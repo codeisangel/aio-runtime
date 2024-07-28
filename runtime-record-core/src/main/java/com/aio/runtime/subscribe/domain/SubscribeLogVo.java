@@ -1,4 +1,4 @@
-package com.aio.runtime.record.log.subscribe.domain;
+package com.aio.runtime.subscribe.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

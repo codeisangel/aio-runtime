@@ -1,4 +1,4 @@
-package com.aio.runtime.record.log.subscribe.service.impl;
+package com.aio.runtime.subscribe.service.impl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -8,10 +8,12 @@ import cn.hutool.db.Entity;
 import cn.hutool.db.Page;
 import cn.hutool.db.sql.Direction;
 import cn.hutool.db.sql.Order;
-import com.aio.runtime.record.log.subscribe.domain.SubscribeLogBo;
-import com.aio.runtime.record.log.subscribe.domain.SubscribeLogVo;
-import com.aio.runtime.record.log.subscribe.domain.params.QuerySubscribeLogParams;
-import com.aio.runtime.record.log.subscribe.service.AbstractSubscribeLogService;
+import com.aio.runtime.subscribe.domain.SubscribeLogBo;
+import com.aio.runtime.subscribe.domain.SubscribeLogVo;
+import com.aio.runtime.subscribe.domain.enums.SubscibeHandleStatusEnum;
+import com.aio.runtime.subscribe.domain.params.QuerySubscribeLogParams;
+import com.aio.runtime.subscribe.domain.params.UpdateSubscribeLogStatusParams;
+import com.aio.runtime.subscribe.service.AbstractSubscribeLogService;
 import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
 import com.kgo.flow.common.domain.page.KgoPage;
 import com.kgo.flow.common.domain.page.PageResult;
@@ -25,6 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,6 +57,7 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
     public static final String SUBSCRIBE_LOG_CATALOGUE_NAME = "subscribeLog";
     @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
     private String projectWorkspace;
+
     /**
      *
      */
@@ -72,6 +76,7 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
         hikariDataSource.setConnectionTimeout(10 * 60 * 1000);
         // 一个连接空闲状态的最大时长（毫秒），超时则被释放（retired），缺省:10分钟
         hikariDataSource.setIdleTimeout(10 * 60 * 1000);
+        hikariDataSource.setPoolName("Hikari-SQLLite-4-Subscribe");
         hikariDataSource.setConnectionTestQuery("SELECT 1");
         // 这里是SQLLite数据库，维护一条链接即刻，并非时排队
         hikariDataSource.setMinimumIdle(1);
@@ -160,6 +165,7 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
             List<SubscribeLogVo> subscribeLogBoList = new ArrayList<>();
             for (Entity entity : hutoolPageResult) {
                 SubscribeLogVo logBo = entity.toBean(SubscribeLogVo.class);
+                logBo.setHandleStatusDesc(SubscibeHandleStatusEnum.getDesc(logBo.getHandleStatus()));
                 subscribeLogBoList.add(logBo);
             }
 
@@ -172,6 +178,21 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void updateSubscribeLogStatusToHandled(UpdateSubscribeLogStatusParams params) {
+        try {
+            Entity entity = Entity.create()
+                    .set(SubscribeFields.HANDLE_TIME,new Date())
+                    .set(SubscribeFields.HANDLE_STATUS, SubscibeHandleStatusEnum.HANDLED.getStatus());
+            Entity where = Entity.create(TABLE_NAME).set(SubscribeFields.ID, params.getId());
+
+            Db.use(ds).update(entity, where);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void checkTable(){
         try {
             Entity entity = Db.use(ds).queryOne("SELECT * FROM sqlite_master WHERE type='table' AND name= ? ", TABLE_NAME);

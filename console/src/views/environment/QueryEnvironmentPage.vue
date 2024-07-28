@@ -45,7 +45,7 @@
               <span>{{ props.row.propertyDesc }}</span>
             </el-form-item>
             <el-form-item label="配置值">
-              <el-tag>{{ props.row.propertyValue }}</el-tag>
+              <span style="color: #409EFF;">{{ props.row.propertyValue }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -54,7 +54,7 @@
       <el-table-column prop="propertyKey" label="配置项" min-width="240" align="center"></el-table-column>
       <el-table-column label="配置值" min-width="160">
         <template slot-scope="scope">
-          <span style="color: #409EFF;">{{scope.row.propertyValue}}</span>
+          <span style="color: #409EFF;">{{scope.row.propertyValue.slice(0,350)}}</span>
         </template>
       </el-table-column>
 

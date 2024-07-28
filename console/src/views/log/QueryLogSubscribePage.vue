@@ -17,7 +17,7 @@
 
           <el-col :span="8">
             <el-form-item label="发生时间">
-              <el-date-picker v-model="createTimeRange" value-format="timestamp" type="datetimerange"
+              <el-date-picker v-model="createTimeRange" value-format="timestamp" type="datetimerange" @change="queryTablePage"
                               range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
                               :picker-options="createTimeRangeOptions"></el-date-picker>
             </el-form-item>
@@ -52,13 +52,13 @@
         <template slot-scope="props">
           <el-form class="demo-table-expand" size="mini" label-width="120px">
             <el-form-item label="订阅名称">
-              <span>{{ props.row.subscribeName }}</span>
+              <span style="color: #009688;">{{props.row.subscribeName}}</span>
             </el-form-item>
             <el-form-item label="日志追踪码">
               <span>{{ props.row.traceId }}</span>
             </el-form-item>
             <el-form-item label="类名">
-              <span>{{ props.row.className }}</span>
+              <span style="color: #1E9FFF;">{{ props.row.className }}</span>
             </el-form-item>
             <el-form-item label="方法名">
               <el-tag>{{ props.row.methodName }}</el-tag>
@@ -75,17 +75,28 @@
             <el-form-item label="企业ID">
               <span>{{ props.row.companyId }}</span>
             </el-form-item>
-            <el-form-item label="处理">
-               <el-button type="primary">已处理</el-button>
+            <el-form-item label="处理状态">
+               <el-tag v-if="props.row.handleStatus === 0" type="warning">{{props.row.handleStatusDesc}}</el-tag>
+              <el-tag v-if="props.row.handleStatus === 1" type="success">{{props.row.handleStatusDesc}}</el-tag>
+              <el-button style="margin-left: 50px;" v-if="props.row.handleStatus === 0" type="primary" @click="updateSubscribeStatusToHandled(props.row)">标记为已处理</el-button>
             </el-form-item>
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column prop="methodName" label="方法名" width="140"></el-table-column>
+      <el-table-column label="订阅名" min-width="100">
+        <template slot-scope="scope">
+          <span style="color: #009688;">{{scope.row.subscribeName}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="方法名" width="140">
+        <template slot-scope="scope">
+          <span style="color: #5FB878;">{{scope.row.methodName}}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="message" label="消息内容" min-width="460"></el-table-column>
       <el-table-column prop="createTime" label="创建时间" min-width="100" align="center"></el-table-column>
       <el-table-column prop="traceId" label="追踪码" width="200"></el-table-column>
-      <el-table-column prop="userName" label="用户名称" width="200"></el-table-column>
+
     </el-table>
     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage"
                    :page-sizes="[50,100, 200, 300, 400,500]" :page-size="50"
@@ -98,7 +109,7 @@
 
 <script>
 
-import {getSubscribeLogPageApi} from "@/api/subscribeApi";
+import {getSubscribeLogPageApi, updateSubscribeStatusApi} from "@/api/subscribeApi";
 
 
 export default {
@@ -199,6 +210,12 @@ export default {
       this.queryTable.methodName=''
       this.queryTable.message=''
       this.queryTablePage()
+    },
+    updateSubscribeStatusToHandled(row){
+      updateSubscribeStatusApi(row).then(rsp => {
+        this.$message.success(rsp.msg)
+        this.queryTablePage()
+      })
     },
     queryTableBtn(){
       this.currentPage = 1

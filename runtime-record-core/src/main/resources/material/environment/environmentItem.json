@@ -1,0 +1,310 @@
+[
+  {
+    "group": "systemProperties",
+    "key": "sun.boot.library.path",
+    "name": "静态库路径",
+    "keywords": "路径,system"
+  },
+  {
+    "group": "systemProperties",
+    "key": "spring.output.ansi.enabled",
+    "name": "控制 Spring 框架在控制台输出日志时是否使用 ANSI 颜色编码"
+  },
+  {
+    "group": "systemProperties",
+    "key": "sun.java.launcher",
+    "name": "表示 Java 的启动方式或发行版本"
+  },
+  {
+    "group": "systemProperties",
+    "key": "sun.os.patch.level",
+    "name": "操作系统的补丁级别或版本号"
+  },
+  {
+    "group": "systemProperties",
+    "key": "PID",
+    "name": "PID"
+  },
+  {
+    "group": "systemProperties",
+    "key": "user.dir",
+    "name": "系统用户工作目录"
+  },
+  {
+    "group": "systemProperties",
+    "key": "java.vm.specification.name",
+    "name": "表示 Java 虚拟机规范名称"
+  },
+  {
+    "group": "systemProperties",
+    "key": "os.arch",
+    "name": "操作系统的架构"
+  },
+  {
+    "group": "systemProperties",
+    "key": "os.name",
+    "name": "操作系统名称"
+  },
+  {
+    "group": "systemProperties",
+    "key": "user.variant",
+    "name": "用户变量"
+  },
+  {
+    "group": "systemProperties",
+    "key": "java.vm.specification.vendor",
+    "name": "Java 虚拟机规范供应商"
+  },
+  {
+    "group": "systemProperties",
+    "key": "intellij.debug.agent",
+    "name": "调试代理（debug agent）的标识或属性"
+  },
+  {
+    "group": "systemProperties",
+    "key": "user.country",
+    "name": "表示用户所在的国家或地区"
+  },
+  {
+    "group": "systemProperties",
+    "key": "path.separator",
+    "name": "路径分隔符",
+    "keywords": "分隔符"
+  },
+  {
+    "group": "systemProperties",
+    "key": "file.encoding.pkg",
+    "name": "文件编码所在的包"
+  },
+  {
+    "group": "systemProperties",
+    "key": "java.vm.version",
+    "name": "JVM版本号"
+  },
+  {
+    "group": "systemProperties",
+    "key": "java.vm.name",
+    "name": "Java 虚拟机（JVM）名称"
+  },
+  {
+    "group": "systemProperties",
+    "key": "java.vm.vendor",
+    "name": "Java 虚拟机（JVM）的实现供应商"
+  },
+  {
+    "group": "systemProperties",
+    "key": "java.vendor.url",
+    "name": "Java 虚拟机（JVM）的实现供应商服官网地址"
+  },
+  {
+    "group": "systemProperties",
+    "key": "java.rmi.server.randomIDs",
+    "name": "用于控制远程方法调用（RMI）中对象标识符（objID）的生成方式"
+  },
+  {
+    "group": "systemProperties",
+    "key": "java.library.path",
+    "name": "静态资源路径",
+    "keywords": "路径,library"
+  },
+  {
+    "group": "systemProperties",
+    "key": "java.class.path",
+    "name": "JVM的Class目录",
+    "keywords": "目录,class"
+  },
+  {
+    "group": "systemProperties",
+    "key": "java.runtime.name",
+    "name": "java运行时环境名称",
+    "keywords": "runtime"
+  },
+  {
+    "group": "systemProperties",
+    "key": "sun.boot.class.path",
+    "name": "jdk目录",
+    "keywords": "class"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "PSModulePath",
+    "name": "PowerShell环境变量",
+    "keywords": "PowerShell"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "PATHEXT",
+    "name": "Windows 操作系统中的可执行文件环境变量",
+    "keywords": "PATHEXT,Windows"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "USERDOMAIN_ROAMINGPROFILE",
+    "name": "用户域的漫游配置文件路径",
+    "keywords": "用户域,文件路径"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "LOCALAPPDATA",
+    "name": "当前用户本地应用程序数据的存储位置",
+    "keywords": "用户,应用程序"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "NVM_SYMLINK",
+    "name": "NVM环境变量存储位置",
+    "keywords": "NVM"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "PROCESSOR_LEVEL",
+    "name": "处理器的型号",
+    "keywords": "处理器"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "USERDOMAIN",
+    "name": "用户域",
+    "keywords": "用户"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "LOGONSERVER",
+    "name": "存储当前用户登录时所使用的域控制器的名称",
+    "keywords": "用户"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "SESSIONNAME",
+    "name": "连接到终端服务会话时的连接和会话名",
+    "keywords": "会话名"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "ALLUSERSPROFILE",
+    "name": "所有用户配置文件的公共目录位置",
+    "keywords": "公共目录"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "PROCESSOR_ARCHITECTURE",
+    "name": "计算机处理器的架构信息"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "RlsSvcPort",
+    "name": "指代与某个服务相关的端口设置"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "SystemDrive",
+    "name": "系统盘"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "MAVEN_HOME",
+    "name": "maven工作目录"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "NUMBER_OF_PROCESSORS",
+    "name": "可用的 CPU 核心数"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "PROCESSOR_REVISION",
+    "name": "处理器的版本信息"
+  },
+  {
+    "group": "systemEnvironment",
+    "key": "OS",
+    "name": "操作系统"
+  },
+
+
+
+
+  {
+    "group": "server.ports",
+    "key": "local.server.port",
+    "name": "本地服务端口",
+    "keywords": "端口"
+  },
+  {
+    "group": "applicationConfig",
+    "key": "project.workspace.path",
+    "name": "系统工作路径",
+    "keywords": "workspace,路径"
+  },
+  {
+    "group": "applicationConfig",
+    "key": "spring.data.solr.host",
+    "name": "solr服务地址"
+  },
+  {
+    "group": "applicationConfig",
+    "key": "server.port",
+    "name": "服务端口"
+  },
+  {
+    "group": "applicationConfig",
+    "key": "spring.freemarker.suffix",
+    "name": "freemarker文件后缀"
+  },
+  {
+    "group": "applicationConfig",
+    "key": "spring.freemarker.cache",
+    "name": "是否开启freemarker缓存"
+  },
+
+  {
+    "group": "applicationConfig",
+    "key": "spring.freemarker.charset",
+    "name": "freemarker编码"
+  },
+  {
+    "group": "applicationConfig",
+    "key": "spring.profiles.active",
+    "name": "开启的配置文件"
+  },
+
+
+  {
+    "group": "applicationConfig",
+    "key": "spring.datasource.username",
+    "name": "数据库用户名"
+  },
+  {
+    "group": "applicationConfig",
+    "key": "spring.datasource.url",
+    "name": "数据库地址"
+  },
+  {
+    "group": "applicationConfig",
+    "key": "spring.datasource.driver-class-name",
+    "name": "数据库驱动名称"
+  },
+  {
+    "group": "applicationConfig",
+    "key": "spring.datasource.driver-class-name",
+    "name": "数据库驱动名称"
+  },
+  {
+    "key": "",
+    "name": "",
+    "keywords": ""
+  },
+  {
+    "key": "",
+    "name": "",
+    "keywords": ""
+  },
+  {
+    "key": "",
+    "name": "",
+    "keywords": ""
+  }
+]
+
+
+

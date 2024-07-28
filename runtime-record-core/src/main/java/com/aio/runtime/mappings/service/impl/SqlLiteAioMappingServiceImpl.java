@@ -15,7 +15,7 @@ import com.aio.runtime.mappings.domain.AioMappingBo;
 import com.aio.runtime.mappings.domain.AioMappingVo;
 import com.aio.runtime.mappings.domain.QueryMappingParams;
 import com.aio.runtime.mappings.service.IAioMappingService;
-import com.aio.runtime.record.log.subscribe.SubscribeMarker;
+import com.aio.runtime.subscribe.log.SubscribeMarker;
 import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
 import com.kgo.flow.common.domain.page.KgoPage;
 import com.kgo.flow.common.domain.page.PageResult;
