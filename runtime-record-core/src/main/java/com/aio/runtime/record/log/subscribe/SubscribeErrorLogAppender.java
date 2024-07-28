@@ -5,6 +5,7 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.aio.runtime.record.log.subscribe.domain.SubscribeLogBo;
+import com.aio.runtime.record.log.subscribe.domain.enums.SubscibeHandleStatusEnum;
 import com.aio.runtime.record.log.subscribe.service.AbstractSubscribeLogService;
 import com.kgo.framework.basic.domain.trace.TraceId;
 import com.kgo.framework.basic.integration.user.AioUserApi;
@@ -54,6 +55,7 @@ public class SubscribeErrorLogAppender extends UnsynchronizedAppenderBase<ILoggi
                 logBo.setCompanyId(currentUser.getCompanyId());
                 logBo.setUserId(currentUser.getUserId());
             }
+            logBo.setHandleStatus(SubscibeHandleStatusEnum.UN_HANDLED.getStatus());
 
             if (StringUtils.isBlank(TraceId.getTraceId())){
                 String traceId = MDC.get("traceId");

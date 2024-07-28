@@ -44,9 +44,13 @@ public class SubscribeLogBo {
      * 错误信息
      */
     private String message;
-
+    private Integer handleStatus;
     /**
      * 创建时间
      */
     private Date createTime;
+    /**
+     * 处理时间
+     */
+    private Date handleTime;
 }

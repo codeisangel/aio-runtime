@@ -5,13 +5,13 @@
         <el-col :span="24">
           <el-col :span="8">
             <el-form-item label="类名">
-              <el-input v-model="queryTable.className"></el-input>
+              <el-input v-model="queryTable.className" @keyup.native.enter="queryTableBtn"></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="6">
             <el-form-item label="方法名">
-              <el-input v-model="queryTable.methodName"></el-input>
+              <el-input v-model="queryTable.methodName" @keyup.native.enter="queryTableBtn"></el-input>
             </el-form-item>
           </el-col>
 
@@ -23,22 +23,23 @@
             </el-form-item>
           </el-col>
         </el-col>
+
         <el-col :span="24">
         <el-col :span="8">
           <el-form-item label="消息内容">
-            <el-input v-model="queryTable.message"></el-input>
+            <el-input v-model="queryTable.message" @keyup.native.enter="queryTableBtn"></el-input>
           </el-form-item>
         </el-col>
           <el-col :span="6">
             <el-form-item label="订阅名">
-              <el-input v-model="queryTable.subscribeName"></el-input>
+              <el-input v-model="queryTable.subscribeName" @keyup.native.enter="queryTableBtn"></el-input>
             </el-form-item>
           </el-col>
 
         <el-col :offset="6" :span="4">
           <el-form-item>
-            <el-button @click="queryTablePage">清除</el-button>
-            <el-button type="primary" @click="queryTablePage">查询</el-button>
+            <el-button @click="clearQueryParamsBtn">清除</el-button>
+            <el-button type="primary" @click="queryTableBtn">查询</el-button>
           </el-form-item>
         </el-col>
         </el-col>
@@ -73,6 +74,9 @@
             </el-form-item>
             <el-form-item label="企业ID">
               <span>{{ props.row.companyId }}</span>
+            </el-form-item>
+            <el-form-item label="处理">
+               <el-button type="primary">已处理</el-button>
             </el-form-item>
           </el-form>
         </template>
@@ -121,6 +125,7 @@ export default {
             const end = new Date();
             const start = new Date();
             start.setTime(start.getTime() - (1000 * 60 * 30));
+            end.setTime(end.getTime() + (1000 * 60 * 60))
             picker.$emit('pick', [start, end]);
           }
         }, {
@@ -129,9 +134,19 @@ export default {
             const end = new Date();
             const start = new Date();
             start.setTime(start.getTime() - (1000 * 60 * 60));
+            end.setTime(end.getTime() + (1000 * 60 * 60))
             picker.$emit('pick', [start, end]);
           }
-        },  {
+        },   {
+            text: '最近一天',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - (1000 * 60 * 60 * 24));
+              end.setTime(end.getTime() + (1000 * 60 * 60))
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
           text: '最近一个周',
           onClick(picker) {
             const end = new Date();
@@ -166,7 +181,7 @@ export default {
     initCreateTimeRangeDefault(){
       const date = new Date();
       this.createTimeRange[0] = date.getTime() - (1000 * 60 * 60 * 24)
-      this.createTimeRange[1] = date.getTime()
+      this.createTimeRange[1] = date.getTime() + (1000 * 60 * 60)
 
     },
     handleSizeChange(val) {
@@ -176,6 +191,18 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       this.queryTablePage();
+    },
+    clearQueryParamsBtn(){
+      this.currentPage = 1
+      this.queryTable.subscribeName = ''
+      this.queryTable.className = ''
+      this.queryTable.methodName=''
+      this.queryTable.message=''
+      this.queryTablePage()
+    },
+    queryTableBtn(){
+      this.currentPage = 1
+      this.queryTablePage()
     },
     queryTablePage() {
       this.queryTable.createFromTime = this.createTimeRange[0];

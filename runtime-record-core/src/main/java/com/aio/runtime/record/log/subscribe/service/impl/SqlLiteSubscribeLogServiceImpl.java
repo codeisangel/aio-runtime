@@ -6,6 +6,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.db.Db;
 import cn.hutool.db.Entity;
 import cn.hutool.db.Page;
+import cn.hutool.db.sql.Direction;
+import cn.hutool.db.sql.Order;
 import com.aio.runtime.record.log.subscribe.domain.SubscribeLogBo;
 import com.aio.runtime.record.log.subscribe.domain.SubscribeLogVo;
 import com.aio.runtime.record.log.subscribe.domain.params.QuerySubscribeLogParams;
@@ -36,6 +38,8 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
     private static class SubscribeFields{
         public static final String ID = "id";
         public static final String CREATE_TIME = "create_time";
+        public static final String HANDLE_TIME = "handle_time";
+        public static final String HANDLE_STATUS = "handle_status";
         public static final String SUBSCRIBE_NAME = "subscribe_name";
         public static final String USER_ID = "user_id";
         public static final String COMPANY_ID = "company_id";
@@ -43,6 +47,7 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
         public static final String CLASS_NAME = "class_name";
         public static final String METHOD_NAME = "method_name";
         public static final String MESSAGE = "message";
+
     }
     private static final String TABLE_NAME = "subscribe_log_record";
     private DataSource ds;
@@ -67,6 +72,7 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
         hikariDataSource.setConnectionTimeout(10 * 60 * 1000);
         // 一个连接空闲状态的最大时长（毫秒），超时则被释放（retired），缺省:10分钟
         hikariDataSource.setIdleTimeout(10 * 60 * 1000);
+        hikariDataSource.setConnectionTestQuery("SELECT 1");
         // 这里是SQLLite数据库，维护一条链接即刻，并非时排队
         hikariDataSource.setMinimumIdle(1);
         hikariDataSource.setMaximumPoolSize(1);
@@ -89,11 +95,14 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
                     .set(SubscribeFields.TRACE_ID, recordBo.getTraceId())
                     .set(SubscribeFields.CLASS_NAME, recordBo.getClassName())
                     .set(SubscribeFields.METHOD_NAME, recordBo.getMethodName())
+                    .set(SubscribeFields.HANDLE_TIME, recordBo.getHandleTime())
+                    .set(SubscribeFields.HANDLE_STATUS, recordBo.getHandleStatus())
                     .set(SubscribeFields.MESSAGE, recordBo.getMessage());
             recordList.add(entity);
         }
 
         try {
+            log.info("插入订阅日志记录数量 : {} 条。",recordList.size());
             long start = System.currentTimeMillis();
             int[] insert = Db.use(ds).insert(recordList);
             log.info("插入订阅记录 ： {} 条  耗时[ {} ] ",insert.length,(System.currentTimeMillis()-start));
@@ -139,11 +148,14 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
                 }
             }
 
-
+            Order createTimeOrder = new Order(SubscribeFields.CREATE_TIME, Direction.DESC);
+            Order handleTimeOrder = new Order(SubscribeFields.CREATE_TIME, Direction.DESC);
+            Page hutoolPage = new Page(page.getPageNum() - 1, page.getPageSize());
+            hutoolPage.setOrder(createTimeOrder,handleTimeOrder);
 
             cn.hutool.db.PageResult<Entity> hutoolPageResult = Db.use(ds).page(
                      where
-                    , new Page(page.getPageNum()-1, page.getPageSize()));
+                    , hutoolPage);
 
             List<SubscribeLogVo> subscribeLogBoList = new ArrayList<>();
             for (Entity entity : hutoolPageResult) {
@@ -174,6 +186,8 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
                 sql.append("  \"trace_id\" text,");
                 sql.append("  \"class_name\" text,");
                 sql.append("  \"method_name\" text,");
+                sql.append("  \"handle_time\" integer,");
+                sql.append("  \"handle_status\" integer,");
                 sql.append("  \"message\" text,");
                 sql.append("  PRIMARY KEY (\"id\") )");
                 int execute = Db.use(ds).execute(sql.toString());
