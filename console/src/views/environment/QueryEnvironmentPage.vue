@@ -51,7 +51,8 @@
         </template>
       </el-table-column>
       <el-table-column prop="environmentGroup" label="配置分组" width="320"></el-table-column>
-      <el-table-column prop="propertyKey" label="配置项" min-width="240" align="center"></el-table-column>
+      <el-table-column prop="propertyKey" label="配置项" min-width="240" align="left"></el-table-column>
+
       <el-table-column label="配置值" min-width="160">
         <template slot-scope="scope">
           <span style="color: #409EFF;">{{scope.row.propertyValue.slice(0,350)}}</span>

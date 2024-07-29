@@ -77,7 +77,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="httpMethod" label="请求方法" width="120"></el-table-column>
-      <el-table-column label="请求地址" min-width="240" align="center">
+      <el-table-column label="请求地址" min-width="240" align="left">
         <template slot-scope="scope">
           <span style="color: #009688;">{{scope.row.url}}</span>
         </template>

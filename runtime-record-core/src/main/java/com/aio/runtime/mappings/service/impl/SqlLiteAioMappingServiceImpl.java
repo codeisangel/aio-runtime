@@ -237,12 +237,15 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
             Entity where = Entity.create(TABLE_NAME);
 
             if (StringUtils.isNotBlank(params.getClassName())) {
+                params.setClassName(StringUtils.trim(params.getClassName()));
                 where.set(TableFields.CLASS_NAME, StrUtil.format("like %{}%", params.getClassName()));
             }
             if (StringUtils.isNotBlank(params.getMethodName())) {
+                params.setMethodName(StringUtils.trim(params.getMethodName()));
                 where.set(TableFields.METHOD_NAME, StrUtil.format("like %{}%", params.getMethodName()));
             }
             if (StringUtils.isNotBlank(params.getHttpMethod())) {
+                params.setHttpMethod(StringUtils.trim(params.getHttpMethod()));
                 where.set(TableFields.HTTP_METHOD, StrUtil.format("like %{}%", params.getHttpMethod()));
             }
             if (StringUtils.isNotBlank(params.getUrl())) {

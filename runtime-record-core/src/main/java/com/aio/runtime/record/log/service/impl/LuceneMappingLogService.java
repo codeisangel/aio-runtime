@@ -105,7 +105,7 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
         int start = (page.getPageNum() - 1) * page.getPageSize();
         int needTotal = page.getPageNum() * page.getPageSize();
         PageResult pageResult = new PageResult<>();
-        log.info("查询条件 ： {} ", builder.build().toString());
+        log.debug("查询条件 ： {} ", builder.build().toString());
         try {
             Directory directory = FSDirectory.open(path);
             IndexSearcher searcher = new IndexSearcher(DirectoryReader.open(directory));
@@ -119,7 +119,7 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
             }
 
             long end = Math.min(topDocs.totalHits,needTotal);
-            log.info("查询数量 ： 分页参数[ {} ]开始[ {} - {} ] {} ",page,start,end, topDocs.totalHits);
+            log.debug("查询数量 ： 分页参数[ {} ]开始[ {} - {} ] {} ",page,start,end, topDocs.totalHits);
             for (int i = start; i < end; i++) {
                 Document doc = searcher.doc(scoreDocs[i].doc);
                 mappingRecordList.add(docToRecord(doc));
