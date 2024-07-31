@@ -5,13 +5,12 @@ import com.aio.runtime.record.log.domain.QueryRecordParams;
 import com.kgo.flow.common.domain.page.KgoPage;
 import com.kgo.flow.common.domain.page.PageResult;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface MappingLogService {
     void temporaryStorage(MappingRecordBo mappingRecord);
     List<MappingRecordBo> drainTo();
-    void batchSave(List<MappingRecordBo> recordList) throws IOException;
+    void batchSave(List<MappingRecordBo> recordList);
     PageResult searchRecords(QueryRecordParams params, KgoPage page);
     Object getRecordInfo();
 }

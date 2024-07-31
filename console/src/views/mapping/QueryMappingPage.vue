@@ -69,6 +69,12 @@
             <el-form-item label="请求地址">
               <span style="color: #009688;">{{ props.row.url }}</span>
             </el-form-item>
+            <el-form-item label="最后访问时间">
+              <span>{{ props.row.activeTime }}</span>
+            </el-form-item>
+            <el-form-item label="访问计数器">
+              <span>{{ props.row.visitCounter }}</span>
+            </el-form-item>
             <el-form-item label="是否作废">
               <el-tag type="danger" size="mini" v-if="props.row.deprecated">已作废</el-tag>
               <el-tag size="mini" v-else>未作废</el-tag>
@@ -88,6 +94,7 @@
           <span style="color: #67C23A;;" v-else>未作废</span>
         </template>
       </el-table-column>
+      <el-table-column prop="visitCounter" label="访问数量" min-width="80"></el-table-column>
       <el-table-column prop="methodName" label="方法名" min-width="180" align="center"></el-table-column>
     </el-table>
 

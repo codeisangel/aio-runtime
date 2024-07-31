@@ -1,7 +1,6 @@
 package com.aio.runtime.subscribe.log;
 
 import ch.qos.logback.classic.LoggerContext;
-import cn.hutool.core.date.DateUtil;
 import com.kgo.framework.basic.integration.user.AioUserApi;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class SubscribeAppenderRunner implements ApplicationRunner {
-    @Autowired
+    @Autowired(required = false)
     private AioUserApi aioUserApi;
 
     @Override
@@ -29,7 +28,6 @@ public class SubscribeAppenderRunner implements ApplicationRunner {
         appender.setContext(context);
         appender.setName("SubscribeErrorLogAppender");
         appender.start();
-        log.info("日志Runner  {} " , DateUtil.now());
         ch.qos.logback.classic.Logger logger = context.getLogger(Logger.ROOT_LOGGER_NAME);
         logger.addAppender(appender);
     }

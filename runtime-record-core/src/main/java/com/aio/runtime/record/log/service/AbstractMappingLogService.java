@@ -1,32 +1,20 @@
 package com.aio.runtime.record.log.service;
 
-import cn.hutool.cron.CronUtil;
-import cn.hutool.cron.task.Task;
 import com.aio.runtime.record.log.domain.MappingRecordBo;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 public abstract class AbstractMappingLogService implements MappingLogService{
-    public static BlockingQueue<MappingRecordBo> RECORD_QUEUE = new LinkedBlockingQueue<>(10000);;
-
+    public static BlockingQueue<MappingRecordBo> RECORD_QUEUE = new LinkedBlockingQueue<>(10000);
+    private ScheduledExecutorService executorMappingLogService = Executors.newScheduledThreadPool(1);
     public AbstractMappingLogService(){
-        CronUtil.schedule("*/1 * * * * *", new Task() {
-            @Override
-            public void execute() {
-                List<MappingRecordBo> recordBos = drainTo();
-                try {
-                    batchSave(recordBos);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        CronUtil.setMatchSecond(true);
-        CronUtil.start();
+        Runnable task = () -> {
+            List<MappingRecordBo> recordBos = drainTo();
+            batchSave(recordBos);
+        };
+        executorMappingLogService.scheduleAtFixedRate(task, 30, 2, TimeUnit.SECONDS);
     }
     @Override
     public void temporaryStorage(MappingRecordBo mappingRecord) {

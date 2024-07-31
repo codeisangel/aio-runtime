@@ -15,6 +15,7 @@ import com.aio.runtime.mappings.domain.AioMappingBo;
 import com.aio.runtime.mappings.domain.AioMappingVo;
 import com.aio.runtime.mappings.domain.QueryMappingParams;
 import com.aio.runtime.mappings.service.IAioMappingService;
+import com.aio.runtime.mappings.statistic.MappingVisitStatisticsUtils;
 import com.aio.runtime.subscribe.log.SubscribeMarker;
 import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
 import com.kgo.flow.common.domain.page.KgoPage;
@@ -32,6 +33,7 @@ import org.springframework.boot.actuate.web.mappings.servlet.RequestMappingCondi
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -64,6 +66,8 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
         public static final String METHOD_NAME = "method_name";
         public static final String HTTP_METHOD = "http_method";
         public static final String DEPRECATED = "deprecated";
+        private static final String ACTIVE_TIME = "active_time";
+        private static final String VISIT_COUNTER = "visit_counter";
         public static final String URL = "url";
     }
 
@@ -89,7 +93,40 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
         ds = hikariDataSource;
         checkTable();
     }
+    @Scheduled(cron="0 0/15 * * * ? ")
+    public void saveMappingStatistics(){
+        Set<String> mappingSet = MappingVisitStatisticsUtils.getIterator();
+        if (ObjectUtil.isEmpty(mappingSet)){
+            return;
+        }
+        for (String classAndMethod : mappingSet) {
 
+            Integer counter = MappingVisitStatisticsUtils.getCounterAndRemove(classAndMethod);
+            if (ObjectUtil.isNull(counter)){
+                continue;
+            }
+            Date liveLyTime = MappingVisitStatisticsUtils.getLiveLyTimeAndRemove(classAndMethod);
+            if (ObjectUtil.isNull(liveLyTime)){
+                continue;
+            }
+
+            String className = MappingVisitStatisticsUtils.getClassName(classAndMethod);
+            String methodName = MappingVisitStatisticsUtils.getMethodName(classAndMethod);
+            AioMappingBo mapping = getMapping(className, methodName);
+            if (ObjectUtil.isEmpty(mapping)){
+                continue;
+            }
+
+            AioMappingBo updateMapping = new AioMappingBo();
+            updateMapping.setId(mapping.getId());
+            updateMapping.setActiveTime(liveLyTime);
+
+            Long counter4Db = ObjectUtil.isNull(mapping.getVisitCounter()) ? 0 : mapping.getVisitCounter();
+            updateMapping.setVisitCounter(counter4Db+counter);
+            updateMappingById(updateMapping);
+
+        }
+    }
     @EventListener
     public void listenerApplicationReadyEvent(ApplicationReadyEvent event) {
 
@@ -98,6 +135,7 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
             @Override
             public void run() {
                 initDataSource();
+                clearActuateMapping();
                 readMappings();
             }
         });
@@ -274,6 +312,55 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
         }
     }
 
+    @Override
+    public AioMappingBo getMapping(String className, String methodName) {
+        try {
+            Entity where = Entity.create(TABLE_NAME)
+                    .set(TableFields.CLASS_NAME,className)
+                    .set(TableFields.METHOD_NAME,methodName);
+            List<Entity> entities = Db.use(ds).find(where);
+            if (ObjectUtil.isEmpty(entities)){
+                return null;
+            }
+            if (entities.size()<1) {
+                return null;
+            }
+            return entities.get(0).toBean(AioMappingBo.class);
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean updateMappingById(AioMappingBo mappingBo) {
+        try {
+            long start = System.currentTimeMillis();
+            Entity where = Entity.create(TABLE_NAME).set(TableFields.ID,mappingBo.getId());
+            Entity entity = new Entity();
+            if (ObjectUtil.isNotNull(mappingBo.getActiveTime())){
+                entity.put(TableFields.ACTIVE_TIME,mappingBo.getActiveTime());
+            }
+            if (ObjectUtil.isNotNull(mappingBo.getVisitCounter())){
+                entity.put(TableFields.VISIT_COUNTER,mappingBo.getVisitCounter());
+            }
+            if (ObjectUtil.isNotNull(mappingBo.getDeprecated())){
+                entity.put(TableFields.DEPRECATED,mappingBo.getDeprecated());
+            }
+            if (StringUtils.isNotBlank(mappingBo.getUrl())){
+                entity.put(TableFields.URL,mappingBo.getUrl());
+            }
+            if (StringUtils.isNotBlank(mappingBo.getHttpMethod())){
+                entity.put(TableFields.HTTP_METHOD,mappingBo.getHttpMethod());
+            }
+
+            int update = Db.use(ds).update(entity, where);
+            log.debug("更新接口 : ID[ {} ] 结果 {} , 耗时[ {} ] ",mappingBo.getId(),update, (System.currentTimeMillis() -start ));
+            return update > 0;
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void batchSave(List<AioMappingBo> mappingBoList) {
         if (ObjectUtil.isEmpty(mappingBoList)) {
             return;
@@ -282,29 +369,65 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
         long start = System.currentTimeMillis();
 
         AtomicInteger addCount = new AtomicInteger(0);
+        AtomicInteger updateCount = new AtomicInteger(0);
         for (AioMappingBo itemBo : mappingBoList) {
-            Entity entity = Entity.create(TABLE_NAME)
-                    .set(TableFields.ID, itemBo.getId())
-                    .set(TableFields.CLASS_NAME, itemBo.getClassName())
-                    .set(TableFields.METHOD_NAME, itemBo.getMethodName())
-                    .set(TableFields.URL, itemBo.getUrl())
-                    .set(TableFields.HTTP_METHOD, itemBo.getHttpMethod())
-                    .set(TableFields.DEPRECATED, itemBo.getDeprecated());
-            try {
-                int insert = Db.use(ds).insert(entity);
-                if (insert > 0) {
+            if (StringUtils.contains(itemBo.getClassName(),"org.springframework.boot.actuate.endpoint.web.servlet")){
+                if (addMapping(itemBo)) {
                     addCount.addAndGet(1);
                 }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            }else {
+                if (updateMapping(itemBo)) {
+                    updateCount.addAndGet(1);
+                }else {
+                    if (addMapping(itemBo)) {
+                        addCount.addAndGet(1);
+                    }
+                }
             }
 
-
         }
-        log.info("插入系统接口信息 ：共 {} 条  插入成功[ {} ] 条 ， 耗时[ {} ] "
-                , mappingBoList.size(), addCount.get(), (System.currentTimeMillis() - start));
+        log.info("插入系统接口信息 ：共 {} 条  插入成功[ {} ] 条 ，其中更新[ {} ] 条, 新增[ {} ] 条， 耗时[ {} ] "
+                , mappingBoList.size(), updateCount.get()+addCount.get(), updateCount.get(), addCount.get(), (System.currentTimeMillis() - start));
     }
-
+    private boolean updateMapping(AioMappingBo itemBo){
+        AioMappingBo mapping = getMapping(itemBo.getClassName(), itemBo.getMethodName());
+        if (ObjectUtil.isNull(mapping)){
+            return false;
+        }
+        AioMappingBo updateMapping = new AioMappingBo();
+        updateMapping.setId(mapping.getId());
+        Long counter4Db = ObjectUtil.isNull(mapping.getVisitCounter()) ? 0 : mapping.getVisitCounter();
+        updateMapping.setVisitCounter(counter4Db);
+        updateMapping.setUrl(itemBo.getUrl());
+        updateMapping.setDeprecated(itemBo.getDeprecated());
+        updateMapping.setHttpMethod(itemBo.getHttpMethod());
+        return updateMappingById(updateMapping);
+    }
+    private boolean addMapping(AioMappingBo itemBo){
+        Entity entity = Entity.create(TABLE_NAME)
+                .set(TableFields.ID, itemBo.getId())
+                .set(TableFields.CLASS_NAME, itemBo.getClassName())
+                .set(TableFields.METHOD_NAME, itemBo.getMethodName())
+                .set(TableFields.URL, itemBo.getUrl())
+                .set(TableFields.HTTP_METHOD, itemBo.getHttpMethod())
+                .set(TableFields.DEPRECATED, itemBo.getDeprecated());
+        try {
+            int insert = Db.use(ds).insert(entity);
+            return insert > 0 ;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void clearActuateMapping(){
+        try {
+            Entity where = Entity.create(TABLE_NAME)
+                    .set(TableFields.CLASS_NAME,StrUtil.format("like {}%", "org.springframework.boot.actuate.endpoint.web.servlet"));
+            int del = Db.use(ds).del(where);
+            log.info("清理ActuateMapping 数据，删除数量[ {} ]",del);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     private void checkTable() {
         try {
             Entity entity = Db.use(ds).queryOne("SELECT * FROM sqlite_master WHERE type='table' AND name= ? ", TABLE_NAME);
@@ -316,13 +439,14 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
                 sql.append("  \"method_name\" text,");
                 sql.append("  \"http_method\" text,");
                 sql.append("  \"deprecated\" integer,");
+                sql.append("  \"active_time\" integer,");
+                sql.append("  \"visit_counter\" integer,");
                 sql.append("  \"url\" text,");
                 sql.append("  PRIMARY KEY (\"id\") )");
                 int execute = Db.use(ds).execute(sql.toString());
             } else {
                 // 清空表
-                Db.use(ds).execute("DELETE FROM  aio_mapping ");
-
+                //Db.use(ds).execute("DELETE FROM aio_mapping ");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

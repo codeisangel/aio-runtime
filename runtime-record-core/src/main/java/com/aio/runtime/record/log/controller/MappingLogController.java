@@ -7,7 +7,6 @@ import com.kgo.flow.common.domain.page.KgoPage;
 import com.kgo.flow.common.domain.page.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.env.EnvironmentEndpoint;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,8 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class MappingLogController {
     @Autowired
     private MappingLogService mappingLogService;
-    @Autowired(required = false)
-    private EnvironmentEndpoint environmentEndpoint;
     @GetMapping("page")
     public AmisResult getRecordPage(@ModelAttribute QueryRecordParams params , @ModelAttribute KgoPage page){
         PageResult pageResult = mappingLogService.searchRecords(params,page);
@@ -35,10 +32,7 @@ public class MappingLogController {
     public AmisResult getRecordInfo(){
         return AmisResult.success(mappingLogService.getRecordInfo());
     }
-    @GetMapping("environment")
-    public AmisResult getEnvironment(){
-        return AmisResult.success(environmentEndpoint.environment(null));
-    }
+
 
 
 }

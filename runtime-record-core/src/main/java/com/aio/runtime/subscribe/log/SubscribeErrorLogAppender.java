@@ -50,11 +50,14 @@ public class SubscribeErrorLogAppender extends UnsynchronizedAppenderBase<ILoggi
             logBo.setClassName(className);
             logBo.setMethodName(methodName);
             logBo.setCreateTime(new Date(event.getTimeStamp()));
-            AioUser currentUser = userApi.getCurrentUser();
-            if (ObjectUtil.isNotEmpty(currentUser)){
-                logBo.setCompanyId(currentUser.getCompanyId());
-                logBo.setUserId(currentUser.getUserId());
+            if (ObjectUtil.isNotNull(userApi)){
+                AioUser currentUser = userApi.getCurrentUser();
+                if (ObjectUtil.isNotEmpty(currentUser)){
+                    logBo.setCompanyId(currentUser.getCompanyId());
+                    logBo.setUserId(currentUser.getUserId());
+                }
             }
+
             logBo.setHandleStatus(SubscibeHandleStatusEnum.UN_HANDLED.getStatus());
 
             if (StringUtils.isBlank(TraceId.getTraceId())){

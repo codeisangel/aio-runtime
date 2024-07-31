@@ -1,6 +1,9 @@
 package com.aio.runtime.mappings.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @author lzm
@@ -18,4 +21,8 @@ public class AioMappingVo {
      * 是否弃用
      */
     private Boolean deprecated;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date activeTime;
+    private Long visitCounter;
 }

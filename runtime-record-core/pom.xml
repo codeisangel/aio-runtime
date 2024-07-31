@@ -106,12 +106,7 @@
             <version>7.7.3</version>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-highlighter</artifactId>
-            <version>7.7.3</version>
-            <optional>true</optional>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-grouping</artifactId>

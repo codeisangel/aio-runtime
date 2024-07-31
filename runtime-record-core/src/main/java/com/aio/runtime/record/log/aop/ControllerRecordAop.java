@@ -1,6 +1,7 @@
 package com.aio.runtime.record.log.aop;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.aio.runtime.mappings.statistic.MappingVisitStatisticsUtils;
 import com.aio.runtime.record.log.controller.MappingLogController;
 import com.aio.runtime.record.log.domain.MappingRecordBo;
 import com.aio.runtime.record.log.service.MappingLogService;
@@ -28,7 +29,6 @@ import org.springframework.stereotype.Component;
 public class ControllerRecordAop {
     @Autowired
     private MappingLogService mappingLogService;
-    // @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
     @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping) || " +
             "@annotation(org.springframework.web.bind.annotation.GetMapping) || " +
             "@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
@@ -47,6 +47,7 @@ public class ControllerRecordAop {
         if (ObjectUtil.isNotNull(result)){
             builder.setResult(result.toString());
         }
+        MappingVisitStatisticsUtils.count(builder.getMappingClass(), builder.getMappingMethod());
         builder.setSuccess(true);
         mappingLogService.temporaryStorage(builder);
         handleReturn(result);
@@ -56,6 +57,7 @@ public class ControllerRecordAop {
     public void afterThrowing(JoinPoint joinPoint, Throwable e){
         MappingRecordBo builder = MappingRecordUtils.builder(joinPoint);
         builder.setSuccess(false);
+        MappingVisitStatisticsUtils.count(builder.getMappingClass(), builder.getMappingMethod());
         builder.setStackTrace(JSON.toJSONString(e.getStackTrace()));
         builder.setExceptionMsg(e.getMessage());
         builder.setThrowable(e.getClass().getName());

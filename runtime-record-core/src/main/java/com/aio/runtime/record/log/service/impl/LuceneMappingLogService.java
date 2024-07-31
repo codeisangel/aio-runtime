@@ -53,7 +53,8 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
     private String projectWorkspace;
 
     @Override
-    public void batchSave(List<MappingRecordBo> recordList) throws IOException {
+    public void batchSave(List<MappingRecordBo> recordList) {
+
         if (ObjectUtil.isEmpty(recordList)) {
             return;
         }
@@ -84,7 +85,11 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
             e.printStackTrace();
         } finally {
             if (indexWriter != null) {
-                indexWriter.close();
+                try {
+                    indexWriter.close();
+                }catch (IOException ioe){
+                    log.error("关闭Lucene 异常，{} ",ioe.getMessage());
+                }
             }
         }
 
@@ -108,7 +113,8 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
         log.debug("查询条件 ： {} ", builder.build().toString());
         try {
             Directory directory = FSDirectory.open(path);
-            IndexSearcher searcher = new IndexSearcher(DirectoryReader.open(directory));
+            DirectoryReader reader = DirectoryReader.open(directory);
+            IndexSearcher searcher = new IndexSearcher(reader);
             TopDocs topDocs = searcher.search(builder.build(), needTotal, sort);
             ScoreDoc[] scoreDocs = topDocs.scoreDocs;
             List<MappingRecordVo> mappingRecordList = new ArrayList<>();
@@ -124,6 +130,7 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
                 Document doc = searcher.doc(scoreDocs[i].doc);
                 mappingRecordList.add(docToRecord(doc));
             }
+
             pageResult.setList(mappingRecordList);
         } catch (IOException e) {
             throw new RuntimeException(e);
