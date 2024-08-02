@@ -160,7 +160,7 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
             Order handleTimeOrder = new Order(SubscribeFields.CREATE_TIME, Direction.DESC);
             Page hutoolPage = new Page(page.getPageNum() - 1, page.getPageSize());
             hutoolPage.setOrder(createTimeOrder,handleTimeOrder);
-
+            long start = System.currentTimeMillis();
             cn.hutool.db.PageResult<Entity> hutoolPageResult = Db.use(ds).page(
                      where
                     , hutoolPage);
@@ -171,7 +171,8 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
                 logBo.setHandleStatusDesc(SubscibeHandleStatusEnum.getDesc(logBo.getHandleStatus()));
                 subscribeLogBoList.add(logBo);
             }
-
+            log.debug("共匹配[ {} ] 条, 页码[ {} ] 页大小[ {} ] ,耗时[ {} ] 毫秒。"
+                    ,hutoolPageResult.getTotal(),page.getPageNum(),page.getPageSize(), (System.currentTimeMillis() - start));
             PageResult<SubscribeLogVo> pageResult = new PageResult<>();
             pageResult.setList(subscribeLogBoList);
             pageResult.setTotal(hutoolPageResult.getTotal());

@@ -8,10 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author lzm
@@ -43,6 +45,24 @@ public class TestSubLogController {
                 log.error(SubscribeMarker.getMarker(RandomUtil.randomStringUpper(3)), StringUtils.trim(line));
             }
         }
+        return AmisResult.successMsg("创建订阅日志");
+    }
+
+    @PostMapping("create2")
+    public AmisResult crateSubscribes(@RequestParam Integer total){
+            List<String> lines = FileUtil.readUtf8Lines("D:\\test\\随机文本\\random\\卫斯理系列@003妖火.txt");
+            AtomicInteger count = new AtomicInteger(0);
+            for (String line : lines) {
+                if (StringUtils.isBlank(line)) {
+                    continue;
+                }
+
+                log.error(SubscribeMarker.getMarker(RandomUtil.randomStringUpper(3)), StringUtils.trim(line));
+                if (count.addAndGet(1) > total) {
+                    break;
+                }
+            }
+
         return AmisResult.successMsg("创建订阅日志");
     }
 }

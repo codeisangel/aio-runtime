@@ -1,13 +1,10 @@
 package com.aio.runtime.subscribe.service;
 
-import cn.hutool.cron.CronUtil;
-import cn.hutool.cron.task.Task;
 import com.aio.runtime.subscribe.domain.SubscribeLogBo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 /**
  * @author lzm
@@ -19,15 +16,13 @@ public abstract class AbstractSubscribeLogService implements SubscribeLogService
     public static void addRecord(SubscribeLogBo logBo){
         RECORD_QUEUE.add(logBo);
     }
+    private ScheduledExecutorService executorSubscribeLogService = Executors.newScheduledThreadPool(2);
     public AbstractSubscribeLogService(){
-        CronUtil.schedule("*/5 * * * * *", new Task() {
-            @Override
-            public void execute() {
-                List<SubscribeLogBo> recordBos = drainTo();
-                batchSave(recordBos);
-            }
-        });
-        CronUtil.setMatchSecond(true);
+        Runnable task = () -> {
+            List<SubscribeLogBo> recordBos = drainTo();
+            batchSave(recordBos);
+        };
+        executorSubscribeLogService.scheduleAtFixedRate(task, 30, 10, TimeUnit.SECONDS);
     }
     private List<SubscribeLogBo> drainTo() {
         List<SubscribeLogBo> records = new ArrayList<>();

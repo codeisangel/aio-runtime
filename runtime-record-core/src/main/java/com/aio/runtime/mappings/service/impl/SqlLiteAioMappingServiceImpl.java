@@ -67,6 +67,7 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
         public static final String HTTP_METHOD = "http_method";
         public static final String DEPRECATED = "deprecated";
         private static final String ACTIVE_TIME = "active_time";
+        private static final String UPDATE_TIME = "update_time";
         private static final String VISIT_COUNTER = "visit_counter";
         public static final String URL = "url";
     }
@@ -367,7 +368,7 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
         }
         log.info("插入系统接口信息，数量 : {} 条。", mappingBoList.size());
         long start = System.currentTimeMillis();
-
+        Map<String,String> existMapping = new HashMap<>();
         AtomicInteger addCount = new AtomicInteger(0);
         AtomicInteger updateCount = new AtomicInteger(0);
         for (AioMappingBo itemBo : mappingBoList) {
@@ -376,6 +377,7 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
                     addCount.addAndGet(1);
                 }
             }else {
+                existMapping.put(itemBo.getClassName(),itemBo.getMethodName());
                 if (updateMapping(itemBo)) {
                     updateCount.addAndGet(1);
                 }else {
@@ -384,11 +386,12 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
                     }
                 }
             }
-
         }
+
         log.info("插入系统接口信息 ：共 {} 条  插入成功[ {} ] 条 ，其中更新[ {} ] 条, 新增[ {} ] 条， 耗时[ {} ] "
                 , mappingBoList.size(), updateCount.get()+addCount.get(), updateCount.get(), addCount.get(), (System.currentTimeMillis() - start));
     }
+
     private boolean updateMapping(AioMappingBo itemBo){
         AioMappingBo mapping = getMapping(itemBo.getClassName(), itemBo.getMethodName());
         if (ObjectUtil.isNull(mapping)){
@@ -440,6 +443,7 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
                 sql.append("  \"http_method\" text,");
                 sql.append("  \"deprecated\" integer,");
                 sql.append("  \"active_time\" integer,");
+                sql.append("  \"update_time\" integer,");
                 sql.append("  \"visit_counter\" integer,");
                 sql.append("  \"url\" text,");
                 sql.append("  PRIMARY KEY (\"id\") )");

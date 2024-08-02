@@ -15,6 +15,7 @@ public abstract class AbstractMappingLogService implements MappingLogService{
             batchSave(recordBos);
         };
         executorMappingLogService.scheduleAtFixedRate(task, 30, 2, TimeUnit.SECONDS);
+
     }
     @Override
     public void temporaryStorage(MappingRecordBo mappingRecord) {
