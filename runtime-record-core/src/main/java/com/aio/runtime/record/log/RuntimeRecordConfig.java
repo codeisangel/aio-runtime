@@ -16,7 +16,7 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @ComponentScan({"com.aio.runtime.record.log","com.aio.runtime.environment","com.aio.runtime.mappings"})
 @Slf4j
-@Import({AioSubscribeConfig.class, AioRuntimeBeansConfig.class})
+@Import({AioSubscribeConfig.class, AioRuntimeBeansConfig.class,AioRuntimeBeansConfig.class})
 @PropertySource("classpath:runtime-log-version.properties")
 public class RuntimeRecordConfig {
 

@@ -68,6 +68,12 @@ export const constantRoutes = [
         meta: {title: '项目配置', icon: 'el-icon-setting'}
       },
       {
+        path: 'beanPage',
+        name: 'BeanPage',
+        component: () => import('@/views/beans/QueryBeanPage.vue'),
+        meta: {title: 'Bean查询', icon: 'el-icon-copy-document'}
+      },
+      {
         path: 'mappingPage',
         name: 'MappingPage',
         component: () => import('@/views/mapping/QueryMappingPage.vue'),

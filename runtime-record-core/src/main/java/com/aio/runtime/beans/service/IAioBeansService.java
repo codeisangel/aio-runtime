@@ -1,11 +1,11 @@
 package com.aio.runtime.beans.service;
 
-import com.aio.runtime.environment.domain.EnvironmentItemBo;
-import com.aio.runtime.environment.domain.QueryEnvironmentParams;
+import com.aio.runtime.beans.domain.AioBeanVo;
+import com.aio.runtime.beans.domain.QueryBeanParams;
 import com.kgo.flow.common.domain.page.KgoPage;
 import com.kgo.flow.common.domain.page.PageResult;
 
 public interface IAioBeansService {
-    PageResult<EnvironmentItemBo> getPage(QueryEnvironmentParams params, KgoPage page);
+    PageResult<AioBeanVo> getPage(QueryBeanParams params, KgoPage page);
     void readBeans();
 }
