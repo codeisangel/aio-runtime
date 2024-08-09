@@ -94,6 +94,12 @@ export const constantRoutes = [
         name: 'MappingPage',
         component: () => import('@/views/mapping/QueryMappingPage.vue'),
         meta: {title: '接口列表', icon: 'el-icon-c-scale-to-original'}
+      },
+      {
+        path: 'logLevelPage',
+        name: 'LogLevelPage',
+        component: () => import('@/views/log/QueryLogLevelPage.vue'),
+        meta: {title: '日志级别', icon: 'el-icon-guide'}
       }
     ]
   },

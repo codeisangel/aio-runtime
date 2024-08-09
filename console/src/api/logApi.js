@@ -25,6 +25,23 @@ export function getLogSchemeDetailsApi(id) {
   })
 }
 
+export function getLogLevelListApi(data) {
+  return request({
+    url: '/runtime/aio/log/level/list',
+    method: 'get',
+    params:data
+  })
+}
+
+export function updateLogLevelApi(data) {
+  return request({
+    url: '/runtime/aio/log/level',
+    method: 'put',
+    data
+  })
+}
+
+
 export function saveLogSchemeApi(data) {
   return request({
     url: '/runtime/aio/log/scheme',
