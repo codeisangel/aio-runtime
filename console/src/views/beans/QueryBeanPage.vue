@@ -85,7 +85,8 @@
       <el-table-column prop="scope" label="bean类型" width="100" align="center">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.scope === 'singleton'" size="mini">单例</el-tag>
-          <el-tag v-else  size="mini">{{aliase}}</el-tag>
+          <el-tag v-else-if="scope.row.scope === 'prototype'" size="mini" type="success">原型</el-tag>
+          <el-tag v-else  size="mini">{{scope.row.scope}}</el-tag>
         </template>
 
       </el-table-column>

@@ -61,6 +61,31 @@ public abstract class AbstractAioSimpleMapper<T> {
             }
         }
     }
+    public T getById(String id){
+        Entity where = Entity.create(tableName).set("id", id);
+        try {
+            List<Entity> all = Db.use(ds).findAll(where);
+            if (ObjectUtil.isNull(all)){
+                return null;
+            }
+            return all.get(0).toBean(ormObject);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void updateById(T obj){
+        Object fieldValue = ReflectUtil.getFieldValue(obj, "id");
+        Entity where = Entity.create(tableName).set("id", fieldValue);
+        Entity entity = convert(obj);
+        try {
+            Db.use(ds).update(
+                    entity,
+                    where
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public void addRow(T obj){
         Entity entity = convert(obj);
         try {

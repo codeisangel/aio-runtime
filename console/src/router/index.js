@@ -22,7 +22,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/log/apiRecordPage',
+    redirect: '/log/aioLogPage',
     children: [{
       path: 'dashboard',
       name: 'Dashboard',
@@ -30,11 +30,27 @@ export const constantRoutes = [
       meta: {title: 'Dashboard', icon: 'dashboard'}
     }]
   },
-
   {
     path: '/log',
     component: Layout,
-    redirect: '/log/apiRecordPage',
+    redirect: '/log/aioLogPage',
+    name: 'Example',
+    meta: {title: '运行记录管理', icon: 'el-icon-s-help'},
+    children: [
+
+      {
+        path: 'aioLogPage',
+        name: 'AioLogPage',
+        component: () => import('@/views/log/QueryAioLogPage.vue'),
+        meta: {title: '日志', icon: 'el-icon-tickets'}
+      }
+    ]
+  },
+
+  {
+    path: '/mapping/log',
+    component: Layout,
+    redirect: '/mapping/log/apiRecordPage',
     name: 'Example',
     meta: {title: '运行记录管理', icon: 'el-icon-s-help'},
     children: [
@@ -42,7 +58,7 @@ export const constantRoutes = [
       {
         path: 'apiRecordPage',
         name: 'apiRecordPage',
-        component: () => import('@/views/log/QueryLogPage.vue'),
+        component: () => import('@/views/mapping/QueryMappingLogPage.vue'),
         meta: {title: '接口访问记录', icon: 'el-icon-tickets'}
       }
     ]

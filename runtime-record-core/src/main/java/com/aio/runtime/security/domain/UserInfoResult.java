@@ -1,4 +1,4 @@
-package com.guodun.aio.document.user.domain.result;
+package com.aio.runtime.security.domain;
 
 import lombok.Data;
 

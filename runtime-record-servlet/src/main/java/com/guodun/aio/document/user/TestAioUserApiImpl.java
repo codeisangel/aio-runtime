@@ -28,6 +28,11 @@ public class TestAioUserApiImpl implements AioUserApi {
     }
 
     @Override
+    public AioUser getUserByUsername(String username) {
+        return null;
+    }
+
+    @Override
     public AioUser getUserByCardNo(String cardNo) {
         return null;
     }

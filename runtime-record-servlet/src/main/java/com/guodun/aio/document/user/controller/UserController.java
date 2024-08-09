@@ -1,6 +1,6 @@
 package com.guodun.aio.document.user.controller;
 
-import com.guodun.aio.document.user.domain.result.UserInfoResult;
+import com.aio.runtime.security.domain.UserInfoResult;
 import com.kgo.flow.common.domain.amis.AmisResult;
 
 import lombok.extern.slf4j.Slf4j;

@@ -65,4 +65,5 @@ public class TestSubLogController {
 
         return AmisResult.successMsg("创建订阅日志");
     }
+
 }

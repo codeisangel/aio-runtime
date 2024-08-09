@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.env.EnvironmentEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Service
 @Slf4j
+@ConditionalOnClass(EnvironmentEndpoint.class)
 public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService {
     private static class TableFields{
         public static final String ID = "id";
@@ -65,7 +67,7 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
     private Map<String,EnvironmentItemDictBo> environmentDictMap = new HashMap<>();
     @EventListener
     public void listenerApplicationReadyEvent(ApplicationReadyEvent event){
-        log.info("应用已经准备就绪-事件  ： {} ", DateUtil.now());
+        log.debug("应用已经准备就绪-事件 读取环境并存储入库 ： {} ", DateUtil.now());
         ThreadUtil.execute(new Runnable() {
             @Override
             public void run() {
@@ -86,7 +88,7 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
 
             String environmentDict = ResourceUtil.readUtf8Str("material/environment/environmentItem.json");
             List<EnvironmentItemDictBo> dictList = JSON.parseArray(environmentDict, EnvironmentItemDictBo.class);
-            log.info("字典配置  ： {} ",JSON.toJSONString(dictList));
+            log.debug("字典配置  ： {} ",JSON.toJSONString(dictList));
             if (ObjectUtil.isEmpty(dictList)){
                 return;
             }

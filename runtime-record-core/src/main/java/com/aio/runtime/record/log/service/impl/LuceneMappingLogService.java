@@ -20,10 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.document.*;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -182,6 +179,7 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
             WildcardQuery wildcardQuery = new WildcardQuery(new Term(MappingLogFieldConstant.MAPPING_CLASS, StrUtil.format("*{}*", params.getMappingClass())));
             builder.add(wildcardQuery, BooleanClause.Occur.MUST);
         }
+
         if (StringUtils.isNotBlank(params.getUrl())) {
             WildcardQuery wildcardQuery = new WildcardQuery(new Term(MappingLogFieldConstant.URL, StrUtil.format("*{}*", params.getUrl())));
             builder.add(wildcardQuery, BooleanClause.Occur.MUST);
@@ -213,6 +211,9 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
 
         Query range = NumericDocValuesField.newSlowRangeQuery(MappingLogFieldConstant.CREATE_TIMESTAMP, params.getCreateFromTime(), params.getCreateToTime());
         builder.add(range, BooleanClause.Occur.MUST);
+
+
+
 
         return builder;
     }
@@ -288,8 +289,10 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
             recordBo.setCreateTime(DateUtil.formatDateTime(new Date(createTimestamp)));
         }
 
+
         return recordBo;
     }
+
 
     private Collection<Document> buildDocuments(List<MappingRecordBo> recordList) {
         Collection<Document> docs = new ArrayList<>();

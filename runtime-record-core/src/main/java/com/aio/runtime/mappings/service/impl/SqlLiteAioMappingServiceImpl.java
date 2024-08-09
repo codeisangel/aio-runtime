@@ -33,7 +33,6 @@ import org.springframework.boot.actuate.web.mappings.servlet.RequestMappingCondi
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -41,6 +40,9 @@ import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -71,7 +73,13 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
         private static final String VISIT_COUNTER = "visit_counter";
         public static final String URL = "url";
     }
-
+    private ScheduledExecutorService executorMappingTaskService = Executors.newScheduledThreadPool(1);
+    public SqlLiteAioMappingServiceImpl(){
+        Runnable task = () -> {
+           saveMappingStatistics();
+        };
+        executorMappingTaskService.scheduleAtFixedRate(task, 30, 30, TimeUnit.SECONDS);
+    }
 
     private void initDataSource() {
         if (!FileUtil.exist(projectWorkspace)) {
@@ -94,9 +102,13 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
         ds = hikariDataSource;
         checkTable();
     }
-    @Scheduled(cron="0 0/15 * * * ? ")
+
+    /**
+     * 保存接口统计日志
+     */
     public void saveMappingStatistics(){
         Set<String> mappingSet = MappingVisitStatisticsUtils.getIterator();
+        log.debug("【保存接口统计数据】 统计数据 ： {} ",mappingSet);
         if (ObjectUtil.isEmpty(mappingSet)){
             return;
         }

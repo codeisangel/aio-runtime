@@ -1,5 +1,7 @@
 package com.aio.runtime.beans;
 
+import org.springframework.boot.actuate.beans.BeansEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2024/07/28
  */
 @Configuration
+@ConditionalOnClass(BeansEndpoint.class)
 @ComponentScan({"com.aio.runtime.beans"})
 public class AioRuntimeBeansConfig {
 
