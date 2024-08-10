@@ -8,6 +8,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.aio.runtime.log.domain.AioLogAppendProperties;
 import com.aio.runtime.log.domain.AioLogBo;
 import com.aio.runtime.log.domain.AioLogVo;
 import com.aio.runtime.log.domain.QueryLogParams;
@@ -27,6 +28,7 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.NRTCachingDirectory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +51,9 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
     public static final String LOG_CATALOGUE_NAME = "log";
     private static final String DAY_FORMAT = "yyyyMMdd";
     private static final String HOUR_FORMAT = "yyyyMMdd_HH";
+
+    @Autowired
+    private AioLogAppendProperties logAppendProperties;
 
     // 项目工作目录
     @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
@@ -81,7 +86,7 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
             if (ObjectUtil.isNotEmpty(logBo.getMdc())) {
                 logBo.getMdc().forEach((k, v) -> {
                     if (StringUtils.isNoneBlank(k, v)) {
-                        document.add(new StringField("mdc."+k, v, Field.Store.YES));
+                        document.add(new StringField("mdc." + k, v, Field.Store.YES));
                     }
                 });
             }
@@ -131,7 +136,7 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
         String indexPath = StrUtil.format("{}/{}/data/", projectWorkspace, LOG_CATALOGUE_NAME);
         List<File> files = FileUtil.loopFiles(Paths.get(indexPath), 1, null);
         Date now = new Date();
-        Date deadline = DateUtil.offsetDay(now, -90);
+        Date deadline = DateUtil.offsetDay(now, (0 - logAppendProperties.getPastday()));
         for (File file : files) {
             String name = file.getName();
             name = name.replaceFirst("aio_log_", "");
@@ -140,13 +145,13 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
                 continue;
             }
             Date indexTime = DateUtil.parse(name, DAY_FORMAT);
-            if (ObjectUtil.isEmpty(indexTime)){
+            if (ObjectUtil.isEmpty(indexTime)) {
                 continue;
             }
             // 日志是否过期
             if (indexTime.before(deadline)) {
                 boolean del = FileUtil.del(file);
-                log.info("删除日志索引 ：索引目录名[ {} ] 是否删除成功[ {} ]",file.getName(),del);
+                log.info("删除日志索引 ：索引目录名[ {} ] 是否删除成功[ {} ]", file.getName(), del);
             }
 
         }
@@ -241,7 +246,7 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
                 logBo.setCreateTimestamp(timestamp);
             }
         }
-        setMdc(logBo,doc);
+        setMdc(logBo, doc);
         return logBo;
     }
 
@@ -257,9 +262,9 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
             }
             String value = field.stringValue();
             String mdcName = StringUtils.remove(field.name(), "mdc.");
-            mdc.put(mdcName,value);
+            mdc.put(mdcName, value);
         }
-        if (ObjectUtil.isNotEmpty(mdc)){
+        if (ObjectUtil.isNotEmpty(mdc)) {
             logBo.setMdc(mdc);
         }
 
@@ -297,9 +302,9 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
             builder.add(wildcardQuery, BooleanClause.Occur.MUST);
         }
 
-        if (ObjectUtil.isNotEmpty(params.getMdc())){
-            params.getMdc().forEach((k,v)->{
-                WildcardQuery wildcardQuery = new WildcardQuery(new Term("mdc."+k, StrUtil.format("*{}*", v)));
+        if (ObjectUtil.isNotEmpty(params.getMdc())) {
+            params.getMdc().forEach((k, v) -> {
+                WildcardQuery wildcardQuery = new WildcardQuery(new Term("mdc." + k, StrUtil.format("*{}*", v)));
                 builder.add(wildcardQuery, BooleanClause.Occur.MUST);
             });
         }
@@ -327,7 +332,6 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
             }
 
         }
-
 
 
         String today = DateUtil.today();

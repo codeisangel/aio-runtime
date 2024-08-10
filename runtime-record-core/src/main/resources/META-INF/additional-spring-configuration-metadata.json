@@ -1,0 +1,47 @@
+{
+
+  "groups": [
+    {
+      "name": "aio.runtime.security",
+      "type": "com.aio.runtime.security.domain.RuntimeSecurityProperties",
+      "sourceType": "com.aio.runtime.security.domain.RuntimeSecurityProperties"
+    },
+    {
+      "name": "aio.runtime.log",
+      "type": "com.aio.runtime.log.domain.AioLogAppendProperties",
+      "sourceType": "com.aio.runtime.log.domain.AioLogAppendProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "aio.runtime.security.enable",
+      "type": "java.lang.Boolean",
+      "description": "是否启动运行时默认的安全配置",
+      "defaultValue": false
+    },
+    {
+      "name": "aio.runtime.security.username",
+      "type": "java.lang.String",
+      "description": "用户名",
+      "defaultValue": "admin"
+    },
+    {
+      "name": "aio.runtime.security.password",
+      "type": "java.lang.String",
+      "description": "用户密码"
+    },
+    {
+      "name": "aio.runtime.log.enable",
+      "type": "java.lang.Boolean",
+      "description": "是否启动日志模块",
+      "defaultValue": true
+    },
+    {
+      "name": "aio.runtime.log.pastday",
+      "type": "java.lang.Integer",
+      "description": "日志保存的时间（单位 天 ）默认90天",
+      "defaultValue": 90
+    }
+  ]
+}
+

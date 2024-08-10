@@ -1,14 +1,11 @@
 package com.guodun.aio.document.controller;
 
-import cn.hutool.core.util.IdUtil;
 import com.guodun.aio.document.domain.TestCacheConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.PostConstruct;
 
 /**
  * @author lzm
@@ -53,12 +50,6 @@ public class TestCacheManageController {
     public String deleteCache1(@RequestParam String id){
         log.info("这是删除缓存 ： {} ",id);
         return id;
-    }
-    @PostConstruct
-    public void init(){
-       getCache1(IdUtil.getSnowflakeNextIdStr());
-       getCache2(IdUtil.getSnowflakeNextIdStr());
-       getCache3(IdUtil.getSnowflakeNextIdStr());
     }
 
 }
