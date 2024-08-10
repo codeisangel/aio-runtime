@@ -96,6 +96,12 @@ export const constantRoutes = [
         meta: {title: '接口列表', icon: 'el-icon-c-scale-to-original'}
       },
       {
+        path: 'cachePage',
+        name: 'CachePage',
+        component: () => import('@/views/cache/QueryAioCachePage.vue'),
+        meta: {title: '缓存管理', icon: 'el-icon-refresh'}
+      },
+      {
         path: 'logLevelPage',
         name: 'LogLevelPage',
         component: () => import('@/views/log/QueryLogLevelPage.vue'),

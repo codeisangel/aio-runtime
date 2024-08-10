@@ -7,7 +7,6 @@ import com.netflix.zuul.exception.ZuulException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
  * @desc:
  * @date 2023/11/7 14:23
  */
-@Component
+//@Component
 @Slf4j
 public class UserCenterZuulFilter extends ZuulFilter {
     @Autowired

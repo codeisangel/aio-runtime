@@ -178,7 +178,7 @@
       <el-table-column prop="level" label="级别" width="80" align="center"></el-table-column>
       <el-table-column label="内容" min-width="460">
         <template slot-scope="scope">
-          <span>{{scope.row.message.slice(0,600)}}</span>
+          <span>{{scope.row.message.slice(0,420)}}</span>
         </template>
       </el-table-column>
 

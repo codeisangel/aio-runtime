@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @Slf4j
-@RequestMapping("/runtime/log/subscribe/")
+@RequestMapping("/runtime/aio/log/subscribe/")
 public class SubscribeLogController {
     @Autowired
     private SubscribeLogService subscribeLogService;
