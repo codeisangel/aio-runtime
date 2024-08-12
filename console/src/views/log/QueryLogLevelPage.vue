@@ -32,6 +32,10 @@
 
     </el-row>
 
+    <el-row>
+      <el-button type="primary" size="small" @click="operationEditLogLevelDialog">修改日志级别</el-button>
+    </el-row>
+
     <el-table :data="articleTable" height="680" size="small" border style="margin-top: 10px">
       <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
       <el-table-column label="类名" min-width="800">
@@ -70,10 +74,11 @@
     <el-dialog title="设置日志级别" :visible.sync="setLogLevelDialogVisible" width="30%">
       <el-form :model="setLogLevelForm" ref="querySchemeForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="日志名称">
-          <el-input v-model="setLogLevelForm.name" disabled></el-input>
+          <el-input v-if="setLogLevelForm.func === 'operation' " v-model="setLogLevelForm.name"></el-input>
+          <el-input v-else v-model="setLogLevelForm.name" disabled></el-input>
         </el-form-item>
-        <el-form-item label="生效日志">
-          <el-input v-model="setLogLevelForm.effectiveLevel" disabled></el-input>
+        <el-form-item label="生效日志" v-if="setLogLevelForm.func !== 'operation'">
+          <el-input  v-model="setLogLevelForm.effectiveLevel" disabled></el-input>
         </el-form-item>
         <el-form-item label="配置状态">
           <el-select v-model="setLogLevelForm.configuredLevel" clearable placeholder="请选择配置状态">
@@ -122,7 +127,11 @@ export default {
     this.queryTablePage()
   },
   methods: {
-
+    operationEditLogLevelDialog(){
+      this.setLogLevelForm.name = ''
+      this.setLogLevelForm.func = 'operation'
+      this.setLogLevelDialogVisible = true
+    },
     clearQueryParamsBtn(){
       this.queryTable.name = ''
       this.queryTable.configuredLevel = ''

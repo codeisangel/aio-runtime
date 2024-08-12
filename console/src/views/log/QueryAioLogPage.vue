@@ -174,11 +174,11 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="时间" width="150" align="center"></el-table-column>
-      <el-table-column prop="level" label="级别" width="80" align="center"></el-table-column>
+      <el-table-column prop="createTime" label="时间" width="140" align="center"></el-table-column>
+      <el-table-column prop="traceId" label="追踪码" width="200" align="center"></el-table-column>
       <el-table-column label="内容" min-width="460">
         <template slot-scope="scope">
-          <span>{{scope.row.message.slice(0,420)}}</span>
+          <span>{{scope.row.message.slice(0,400)}}</span>
         </template>
       </el-table-column>
 

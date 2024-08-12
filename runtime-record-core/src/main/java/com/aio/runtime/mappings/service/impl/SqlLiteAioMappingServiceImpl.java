@@ -11,11 +11,19 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.db.Db;
 import cn.hutool.db.Entity;
 import cn.hutool.db.Page;
+import com.aio.runtime.beans.controller.IAioBeansController;
+import com.aio.runtime.cache.controller.AioCacheManageController;
+import com.aio.runtime.environment.controller.AioEnvironmentController;
+import com.aio.runtime.log.controller.AioLogController;
+import com.aio.runtime.log.level.AIoLogLevelController;
+import com.aio.runtime.mappings.controller.AioMappingController;
 import com.aio.runtime.mappings.domain.AioMappingBo;
 import com.aio.runtime.mappings.domain.AioMappingVo;
 import com.aio.runtime.mappings.domain.QueryMappingParams;
 import com.aio.runtime.mappings.service.IAioMappingService;
 import com.aio.runtime.mappings.statistic.MappingVisitStatisticsUtils;
+import com.aio.runtime.record.log.controller.MappingLogController;
+import com.aio.runtime.subscribe.controller.SubscribeLogController;
 import com.aio.runtime.subscribe.log.SubscribeMarker;
 import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
 import com.kgo.flow.common.domain.page.KgoPage;
@@ -25,6 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.endpoint.web.servlet.AbstractWebMvcEndpointHandlerMapping;
+import org.springframework.boot.actuate.endpoint.web.servlet.WebMvcEndpointHandlerMapping;
 import org.springframework.boot.actuate.web.mappings.HandlerMethodDescription;
 import org.springframework.boot.actuate.web.mappings.MappingsEndpoint;
 import org.springframework.boot.actuate.web.mappings.servlet.DispatcherServletMappingDescription;
@@ -220,7 +230,21 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
                         continue;
                     }
 
+
                     String className = methodDesc.getClassName();
+                    if (StringUtils.startsWithAny(className
+                            , AioCacheManageController.class.getName()
+                            , AioEnvironmentController.class.getName()
+                            , AioLogController.class.getName()
+                            , AIoLogLevelController.class.getName()
+                            , MappingLogController.class.getName()
+                            , SubscribeLogController.class.getName()
+                            , IAioBeansController.class.getName()
+                            , AbstractWebMvcEndpointHandlerMapping.class.getName()
+                            , WebMvcEndpointHandlerMapping.class.getName()
+                            , AioMappingController.class.getName())){
+                        continue;
+                    }
                     String methodName = methodDesc.getName();
 
                     // 是否可以通过反射获取接口参数
