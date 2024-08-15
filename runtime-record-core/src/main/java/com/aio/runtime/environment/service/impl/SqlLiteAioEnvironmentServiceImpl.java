@@ -10,6 +10,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.db.Db;
 import cn.hutool.db.Entity;
 import cn.hutool.db.Page;
+import cn.hutool.system.HostInfo;
+import cn.hutool.system.SystemUtil;
 import com.aio.runtime.environment.domain.EnvironmentItemBo;
 import com.aio.runtime.environment.domain.EnvironmentItemDictBo;
 import com.aio.runtime.environment.domain.QueryEnvironmentParams;
@@ -60,6 +62,9 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
     @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
     private String projectWorkspace;
 
+    @Value("${server.port:8080}")
+    private Integer port;
+
 
     @Autowired(required = false)
     private EnvironmentEndpoint environmentEndpoint;
@@ -77,14 +82,20 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
                 initDataSource();
                 // 读取环境配置
                 readEnvironments();
+                visitUrl();
             }
         });
-
     }
-
+    private void visitUrl(){
+        HostInfo hostInfo = SystemUtil.getHostInfo();
+        if (ObjectUtil.isNull(hostInfo)){
+            return;
+        }
+        String address = hostInfo.getAddress();
+        System.out.println(StrUtil.format("项目运行时访问地址 :   http://{}:{}/view/runtime",address,port));
+    }
     private void readDict(){
         try {
-
 
             String environmentDict = ResourceUtil.readUtf8Str("material/environment/environmentItem.json");
             List<EnvironmentItemDictBo> dictList = JSON.parseArray(environmentDict, EnvironmentItemDictBo.class);

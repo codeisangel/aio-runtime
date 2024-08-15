@@ -17,6 +17,7 @@
                 <el-option label="INFO" value="INFO"></el-option>
                 <el-option label="WARN" value="WARN"></el-option>
                 <el-option label="ERROR" value="ERROR"></el-option>
+                <el-option label="OFF" value="OFF"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -87,6 +88,7 @@
             <el-option label="INFO" value="INFO"></el-option>
             <el-option label="WARN" value="WARN"></el-option>
             <el-option label="ERROR" value="ERROR"></el-option>
+            <el-option label="OFF" value="OFF"></el-option>
           </el-select>
         </el-form-item>
       </el-form>

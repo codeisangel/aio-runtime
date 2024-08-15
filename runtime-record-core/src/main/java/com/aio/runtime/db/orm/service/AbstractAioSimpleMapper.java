@@ -203,7 +203,7 @@ public abstract class AbstractAioSimpleMapper<T> {
     public List<Object> getTableColumns(){
         try {
             List<Entity> entityList = Db.use(ds).query(String.format("PRAGMA table_info(%s);",tableName) );
-            log.info("表的所有列 ： {} ", JSON.toJSONString(entityList));
+            log.debug("表的所有列 ： {} ", JSON.toJSONString(entityList));
             return null;
         } catch (SQLException e) {
             return null;

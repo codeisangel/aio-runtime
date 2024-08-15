@@ -3,9 +3,16 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
+const getURLProxy = () =>{
+  const {pathname} = window.location
+  const index = pathname.indexOf("/view/runtime");
+  const proxyUrl = pathname.slice(0,index);
+  console.log("运行时运维后台代理地址前缀 ： " + proxyUrl)
+  return proxyUrl;
+}
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  baseURL: process.env.NODE_ENV === 'development' ? process.env.VUE_APP_BASE_API : getURLProxy() , // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
