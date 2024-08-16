@@ -32,6 +32,8 @@ public class AioLogController {
     private AioLogService logService;
     @Autowired
     private AioLogQuerySchemeService querySchemeService;
+
+
     @PostMapping("page")
     public AmisResult getEnvironmentItemPage(@RequestBody QueryLogParams params , @ModelAttribute KgoPage page){
         PageResult pageResult = logService.getPage(params,page);

@@ -1,31 +1,111 @@
 <template>
   <div class="dashboard-container">
-    <el-card class="box-card">
-      <div slot="header" class="clearfix">
-        <span>车管地址</span>
-      </div>
-      <div class="el-link-content-sty">
-        <el-link type="success" href=" http://192.168.2.137:8080/ " target="_blank">车主端</el-link>
-        <el-link type="success" href=" http://192.168.2.137:8081/ " target="_blank">运维端</el-link>
-        <el-link type="success" href=" http://192.168.2.137:8082/ " target="_blank">金融机构</el-link>
-        <el-link type="success" href=" http://192.168.2.137:8083/ " target="_blank">车管所</el-link>
-        <el-link type="success" href=" http://192.168.1.61:9120/plumelog/# " target="_blank">日志</el-link>
-        <el-link type="success" href=" http://192.168.1.233:9001/plumelog/# " target="_blank">用户中心日志</el-link>
-      </div>
-    </el-card>
+   <el-row :gutter="15">
+     <el-col :span="4">
+       <el-card class="box-card" style="height: 240px;">
+         <el-result icon="success" :title="runtimeVersion" subTitle="当前系统版本">
+         </el-result>
+       </el-card>
+     </el-col>
+
+     <el-col :span="6">
+       <el-card class="box-card" style="height: 240px;">
+         <el-alert :title="'工作目录 : ' + runTimeWorkspace" type="success" :closable="false" show-icon style="margin-bottom: 8px"></el-alert>
+         <el-alert :title="'系统开始时间 : ' + systemStartingTime" type="success" :closable="false" show-icon style="margin-bottom: 8px"></el-alert>
+         <el-alert :title="'系统启动时间 : ' + systemStartedTime" type="success" :closable="false" show-icon style="margin-bottom: 8px"></el-alert>
+         <el-alert :title="'程序PID :     ' + currentPid" type="warning" :closable="false" show-icon style="margin-bottom: 8px"></el-alert>
+
+       </el-card>
+     </el-col>
+     <el-col :span="6">
+       <el-card class="box-card" style="height: 240px;">
+         <el-alert :title="'主机名 : ' + hostInfo.name" type="success" :closable="false" show-icon style="margin-bottom: 8px"></el-alert>
+         <el-alert :title="'主机IP : ' + hostInfo.address" type="success" :closable="false" show-icon style="margin-bottom: 8px"></el-alert>
+         <el-alert :title="'系统架构 : ' + osInfo.arch" type="success" :closable="false" show-icon style="margin-bottom: 8px"></el-alert>
+         <el-alert :title="'系统名称 : ' + osInfo.name " type="success" :closable="false" show-icon style="margin-bottom: 8px"></el-alert>
+         <el-alert :title="'系统版本号 : ' + osInfo.version  " type="success" :closable="false" show-icon style="margin-bottom: 10px"></el-alert>
+       </el-card>
+     </el-col>
+     <el-col :span="8"  style="height: 240px;">
+       <el-card class="box-card" style="height: 240px;">
+         <el-result icon="success" :title="runtimeVersion" subTitle="当前系统版本">
+         </el-result>
+       </el-card>
+     </el-col>
+     <el-col :span="12" style="margin-top: 15px;">
+       <el-card class="box-card" style="height: 240px;">
+         <el-result icon="success" :title="runtimeVersion" subTitle="当前系统版本">
+         </el-result>
+       </el-card>
+     </el-col>
+     <el-col :span="12" style="margin-top: 15px;">
+       <el-card class="box-card" style="height: 240px;">
+         <el-result icon="success" :title="runtimeVersion" subTitle="当前系统版本">
+         </el-result>
+       </el-card>
+     </el-col>
+     <el-col :span="12" style="margin-top: 15px;">
+       <el-card class="box-card" style="height: 240px;">
+         <el-result icon="success" :title="runtimeVersion" subTitle="当前系统版本">
+         </el-result>
+       </el-card>
+     </el-col>
+
+
+   </el-row>
 
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {
+  getHostInfoApi, getOSApi, getPIDApi,
+  getRunTimeVersionApi,
+  getRunTimeWorkspaceApi,
+  getSystemStartedTimeApi,
+  getSystemStartingTimeApi
+} from "@/api/runtimeApi";
 
 export default {
   name: 'Dashboard',
-  computed: {
-    ...mapGetters([
-      'name'
-    ])
+  data() {
+    return {
+      runtimeVersion:'',
+      runTimeWorkspace:'',
+      systemStartingTime:'',
+      systemStartedTime:'',
+      currentPid:'',
+      osInfo:{},
+      hostInfo:{}
+    }
+  },
+  created() {
+    this.getRuntimeVersion()
+  },
+  methods: {
+    getRuntimeVersion() {
+      getRunTimeVersionApi().then(rsp => {
+        this.runtimeVersion = rsp.data;
+      })
+      getRunTimeWorkspaceApi().then(rsp => {
+        this.runTimeWorkspace = rsp.data;
+      })
+      getSystemStartingTimeApi().then(rsp => {
+        this.systemStartingTime = rsp.data;
+      })
+      getSystemStartedTimeApi().then(rsp => {
+        this.systemStartedTime = rsp.data;
+      })
+      getHostInfoApi().then(rsp => {
+        this.hostInfo = rsp.data;
+      })
+      getPIDApi().then(rsp => {
+        this.currentPid = rsp.data;
+      })
+      getOSApi().then(rsp => {
+        this.osInfo = rsp.data;
+      })
+    }
   }
 }
 </script>

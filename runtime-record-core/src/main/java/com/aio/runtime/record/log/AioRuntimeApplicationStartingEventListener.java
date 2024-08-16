@@ -2,6 +2,7 @@ package com.aio.runtime.record.log;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Console;
+import com.aio.runtime.common.info.SystemRuntimeInfo;
 import com.kgo.framework.basic.domain.trace.TraceId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartingEvent;
@@ -21,6 +22,7 @@ public class AioRuntimeApplicationStartingEventListener implements ApplicationLi
     @Override
     public void onApplicationEvent(ApplicationStartingEvent event) {
         TraceId.setTraceId("start_"+ DateUtil.format(new Date(),"yyyyMMdd日HH时mm分ss秒"));
+        SystemRuntimeInfo.systemStarting();
         Console.log("#### 系统运行时模块启动 ####");
     }
 }

@@ -2,6 +2,7 @@ package com.aio.runtime.record.log;
 
 import com.aio.runtime.beans.AioRuntimeBeansConfig;
 import com.aio.runtime.cache.AioCacheManageConfig;
+import com.aio.runtime.jvm.AioJvmConfig;
 import com.aio.runtime.log.AioLogAppendConfig;
 import com.aio.runtime.security.RuntimeSecurityConfig;
 import com.aio.runtime.subscribe.AioSubscribeConfig;
@@ -17,7 +18,12 @@ import org.springframework.context.annotation.PropertySource;
  * @date 2024/04/18
  */
 @Configuration
-@ComponentScan({"com.aio.runtime.record.log","com.aio.runtime.environment","com.aio.runtime.mappings"})
+@ComponentScan({
+        "com.aio.runtime.record.log",
+        "com.aio.runtime.environment",
+        "com.aio.runtime.common",
+        "com.aio.runtime.mappings"
+})
 @Slf4j
 @Import({
 
@@ -26,6 +32,7 @@ import org.springframework.context.annotation.PropertySource;
         AioRuntimeBeansConfig.class,
         RuntimeSecurityConfig.class,
         AioLogAppendConfig.class,
+        AioJvmConfig.class,
         AioCacheManageConfig.class
 
         })

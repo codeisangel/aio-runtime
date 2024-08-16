@@ -22,12 +22,12 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/log/aioLogPage',
+    redirect: '/dashboard',
     children: [{
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: {title: 'Dashboard', icon: 'dashboard'}
+      meta: {title: '控制面板', icon: 'dashboard'}
     }]
   },
   {
