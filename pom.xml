@@ -13,7 +13,7 @@
         <module>runtime-record-core</module>
     </modules>
     <properties>
-        <revision>1.0.20</revision>
+        <revision>1.0.21</revision>
         <user.version>2.1.106</user.version>
         <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
         <spring-cloud-alibaba.version>2.2.1.RELEASE</spring-cloud-alibaba.version>
