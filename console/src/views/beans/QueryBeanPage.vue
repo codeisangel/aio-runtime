@@ -117,7 +117,7 @@
         <el-form-item label="Class名称">
           <el-input v-model="runBeanForm.className" disabled></el-input>
         </el-form-item>
-        <el-form-item label="方法名">
+        <el-form-item label="方法名" class="method-form-style">
           <el-select v-model="runBeanForm.method" @change="getMethodParamsInfo" clearable filterable placeholder="请选择只需执行的方法名">
             <el-option v-for="(methodName) in runBeanForm.methods" :key="methodName" :label="methodName" :value="methodName"></el-option>
           </el-select>
@@ -246,3 +246,8 @@ export default {
   }
 }
 </script>
+<style>
+.method-form-style .el-select .el-input{
+  width: 400px;
+}
+</style>
