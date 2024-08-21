@@ -13,7 +13,7 @@
 
 <script>
 import { Navbar, Sidebar, AppMain } from './components'
-import ResizeMixin from './mixin/ResizeHandler'
+import ResizeMixin from '@/layout/mixin/ResizeHandler'
 
 export default {
   name: 'Layout',

@@ -73,6 +73,11 @@
             <el-form-item label="别名">
               <el-tag v-for="(aliase) in props.row.aliases" :key="aliase" size="mini" type="success" style="margin-right: 10px">{{aliase}}</el-tag>
             </el-form-item>
+
+            <el-form-item label="Bean操作">
+              <el-button type="primary" @click="openRunBeanDialogVisible(props.row)">执行Bean</el-button>
+            </el-form-item>
+
           </el-form>
         </template>
       </el-table-column>
@@ -104,12 +109,52 @@
     </el-pagination>
 
 
+    <el-dialog title="执行Bean" :visible.sync="runBeanDialogVisible" top="40px" width="55%">
+      <el-form :model="runBeanForm" ref="runBeanForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="Bean名称">
+          <el-input v-model="runBeanForm.beanName" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="Class名称">
+          <el-input v-model="runBeanForm.className" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="方法名">
+          <el-select v-model="runBeanForm.method" @change="getMethodParamsInfo" clearable filterable placeholder="请选择只需执行的方法名">
+            <el-option v-for="(methodName) in runBeanForm.methods" :key="methodName" :label="methodName" :value="methodName"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="方法参数描述">
+          <json-viewer :value="runParamsDesc" copyable theme="my-awesome-json-theme">
+            <template slot="copy">
+              <el-button type="text">复制</el-button>
+            </template>
+          </json-viewer>
+        </el-form-item>
+        <el-form-item label="方法参数">
+          <el-input  type="textarea" v-model="runBeanForm.params" :rows="8"></el-input>
+        </el-form-item>
+
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="runBeanDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="runBeanBtn()">确 定</el-button>
+      </span>
+    </el-dialog>
+
+
+    <el-dialog title="执行结果" :visible.sync="runBeanResultDialogVisible" top="40px" width="50%">
+      <json-viewer :value="runResultObj" copyable theme="my-awesome-json-theme">
+        <template slot="copy">
+          <el-button type="text">复制</el-button>
+        </template>
+      </json-viewer>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 
-import {getBeanPageApi} from "@/api/beanApi";
+import {getBeanPageApi, getMethodListApi, getMethodParametersApi, runMethodApi} from "@/api/beanApi";
 
 
 export default {
@@ -119,6 +164,13 @@ export default {
         beanName : '',
         aliase : ''
       },
+      runBeanForm: {
+         methods: []
+      },
+      runBeanResultDialogVisible : false,
+      runBeanDialogVisible : false,
+      runParamsDesc:[],
+      runResultObj:{},
       articleTable: [],
       currentPage: 1,
       currentPageSize: 100,
@@ -156,14 +208,40 @@ export default {
       this.queryTable.pageSize = this.currentPageSize;
       getBeanPageApi(this.queryTable).then(rsp => {
         this.articleTable = rsp.data.list;
-
         this.tableTotal = rsp.data.total;
-
       }).catch(err => {
         this.$message.error(err)
       })
-    }
+    },
+    getMethodParamsInfo(){
+      const params = {
+        className : this.runBeanForm.className,
+        method:this.runBeanForm.method
+      }
+      getMethodParametersApi(params).then(rsp => {
+        this.runParamsDesc = rsp.data
+      })
+    },
+    openRunBeanDialogVisible(row){
+      this.runBeanForm = row
+      const params = {className : this.runBeanForm.className}
+      getMethodListApi(params).then(rsp => {
+        this.runBeanForm.methods = rsp.data
+        this.runBeanDialogVisible = true
+      })
+    },
+    runBeanBtn(){
+      if (this.runBeanForm.params){
+        this.runBeanForm.parameters = JSON.parse(this.runBeanForm.params)
+      }
 
+      runMethodApi(this.runBeanForm).then(rsp => {
+         this.runResultObj = rsp.data
+         this.runBeanResultDialogVisible = true
+         this.$message.success(rsp.msg)
+
+      })
+    }
 
   }
 }

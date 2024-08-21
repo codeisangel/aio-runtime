@@ -1,0 +1,97 @@
+{
+  "xAxis": {
+    "data": [],
+    "boundaryGap": false,
+    "axisTick": {
+      "show": false
+    }
+  },
+  "grid": {
+    "left": 10,
+    "right": 10,
+    "bottom": 20,
+    "top": 30,
+    "containLabel": true
+  },
+  "tooltip": {
+    "trigger": "axis",
+    "axisPointer": {
+      "type": "cross"
+    },
+    "padding": [
+      5,
+      10
+    ]
+  },
+  "yAxis": {
+    "axisTick": {
+      "show": false
+    }
+  },
+  "legend": {
+    "data": [
+      "守护线程数量",
+      "线程顶峰数量",
+      "活跃线程"
+    ]
+  },
+  "series": [
+    {
+      "name": "守护线程数量",
+      "itemStyle": {
+        "normal": {
+          "color": "#009688",
+          "lineStyle": {
+            "color": "#009688",
+            "width": 2
+          }
+        }
+      },
+      "smooth": true,
+      "type": "line",
+      "data": [],
+      "animationDuration": 2800,
+      "animationEasing": "cubicInOut"
+    },
+    {
+      "name": "线程顶峰数量",
+      "smooth": true,
+      "type": "line",
+      "itemStyle": {
+        "normal": {
+          "color": "#FF5722",
+          "lineStyle": {
+            "color": "#FF5722",
+            "width": 2
+          },
+          "areaStyle": {
+            "color": "#f3f8ff"
+          }
+        }
+      },
+      "data": [],
+      "animationDuration": 2800,
+      "animationEasing": "quadraticOut"
+    },
+    {
+      "name": "活跃线程",
+      "smooth": true,
+      "type": "line",
+      "itemStyle": {
+        "normal": {
+          "color": "#3888fa",
+          "lineStyle": {
+            "color": "#3888fa",
+            "width": 2
+          },
+          "areaStyle": {
+            "color": "#f3f8ff"
+          }
+        }
+      },
+      "data": [],
+      "animationDuration": 2800,
+      "animationEasing": "quadraticOut"
+    }
+  ]
+}

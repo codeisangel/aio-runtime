@@ -12,5 +12,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "aio.runtime.log")
 public class AioLogAppendProperties {
     private Boolean enable = true;
-    private Integer pastday = 90;
+    /**
+     * 日志保存时间 单位天
+     */
+    private Integer pastDay = 90;
+    /**
+     * 索引周期 默认小时 hour , 可选 day
+     */
+    private String indexPeriod = "hour";
 }

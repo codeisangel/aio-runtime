@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -46,6 +48,51 @@ public class AioQueryCondition<T> {
         conditionList.add(condition);
         return this;
     }
+    public AioQueryCondition gt(Func1<T,?> fieldFunc,Object value){
+        Condition condition = new Condition();
+        condition.setCondition(ConditionEnum.GT);
+        condition.setFieldName(LambdaUtil.getFieldName(fieldFunc));
+        condition.setValue(value);
+        conditionList.add(condition);
+        return this;
+    }
+
+    public AioQueryCondition lt(Func1<T,?> fieldFunc,Object value){
+        Condition condition = new Condition();
+        condition.setCondition(ConditionEnum.LT);
+        condition.setFieldName(LambdaUtil.getFieldName(fieldFunc));
+        condition.setValue(value);
+        conditionList.add(condition);
+        return this;
+    }
+
+    public AioQueryCondition between(Func1<T,?> fieldFunc,Object start,Object end){
+        Condition condition = new Condition();
+        condition.setCondition(ConditionEnum.BETWEEN);
+        condition.setFieldName(LambdaUtil.getFieldName(fieldFunc));
+        List<Object> betweenList = new ArrayList<>();
+        betweenList.add(start);
+        betweenList.add(end);
+        condition.setValue(betweenList);
+        conditionList.add(condition);
+        return this;
+    }
+    public <S> AioQueryCondition between(Func1<T,S> fieldFunc, Collection<S> between){
+        Condition condition = new Condition();
+        condition.setCondition(ConditionEnum.BETWEEN);
+        condition.setFieldName(LambdaUtil.getFieldName(fieldFunc));
+        condition.setValue(between);
+        conditionList.add(condition);
+        return this;
+    }
+    public AioQueryCondition between(Func1<T,?> fieldFunc,Object... between){
+        Condition condition = new Condition();
+        condition.setCondition(ConditionEnum.BETWEEN);
+        condition.setFieldName(LambdaUtil.getFieldName(fieldFunc));
+        condition.setValue(Arrays.asList(between));
+        conditionList.add(condition);
+        return this;
+    }
     public AioQueryCondition like(Func1<T,String> fieldFunc,Object value){
         Condition condition = new Condition();
         condition.setCondition(ConditionEnum.LIKE);
@@ -62,4 +109,7 @@ public class AioQueryCondition<T> {
         conditionList.add(condition);
         return this;
     }
+
+
+
 }

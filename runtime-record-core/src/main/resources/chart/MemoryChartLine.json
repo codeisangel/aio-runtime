@@ -1,0 +1,76 @@
+{
+  "xAxis": {
+    "data": [],
+    "boundaryGap": false,
+    "axisTick": {
+      "show": false
+    }
+  },
+  "grid": {
+    "left": 10,
+    "right": 10,
+    "bottom": 20,
+    "top": 30,
+    "containLabel": true
+  },
+  "tooltip": {
+    "trigger": "axis",
+    "axisPointer": {
+      "type": "cross"
+    },
+    "padding": [
+      5,
+      10
+    ]
+  },
+  "yAxis": {
+    "axisTick": {
+      "show": false
+    }
+  },
+  "legend": {
+    "data": [
+      "已使用内存",
+      "已分配内存"
+    ]
+  },
+  "series": [
+    {
+      "name": "已使用内存",
+      "itemStyle": {
+        "normal": {
+          "color": "#FF005A",
+          "lineStyle": {
+            "color": "#FF005A",
+            "width": 2
+          }
+        }
+      },
+      "smooth": true,
+      "type": "line",
+      "data": [],
+      "animationDuration": 2800,
+      "animationEasing": "cubicInOut"
+    },
+    {
+      "name": "已分配内存",
+      "smooth": true,
+      "type": "line",
+      "itemStyle": {
+        "normal": {
+          "color": "#3888fa",
+          "lineStyle": {
+            "color": "#3888fa",
+            "width": 2
+          },
+          "areaStyle": {
+            "color": "#f3f8ff"
+          }
+        }
+      },
+      "data": [],
+      "animationDuration": 2800,
+      "animationEasing": "quadraticOut"
+    }
+  ]
+}

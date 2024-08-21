@@ -86,6 +86,16 @@ public abstract class AbstractAioSimpleMapper<T> {
             throw new RuntimeException(e);
         }
     }
+    public void deleteById(String id){
+        Entity where = Entity.create(tableName).set("id", id);
+        try {
+            Db.use(ds).del(
+                    where
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public void addRow(T obj){
         Entity entity = convert(obj);
         try {
@@ -170,6 +180,8 @@ public abstract class AbstractAioSimpleMapper<T> {
             where.set(columnName,String.format("<> %s",value));
         }else if (ConditionEnum.LIKE.equals(conditionEnum)){
             where.set(columnName, StrUtil.format("like %{}%",value));
+        }else if (ConditionEnum.LT.equals(conditionEnum)){
+            where.set(columnName, StrUtil.format("<= {}",value));
         }else {
             where.set(columnName,value);
         }

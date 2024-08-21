@@ -93,10 +93,9 @@
           <el-tag v-else type="danger"  size="mini">{{scope.row.success}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" min-width="160"></el-table-column>
+      <el-table-column prop="createTime" label="创建时间" width="150" align="center"></el-table-column>
       <el-table-column prop="companyName" label="企业名称" width="200"></el-table-column>
       <el-table-column prop="userName" label="用户名称" min-width="100" align="center"></el-table-column>
-      <el-table-column prop="mappingMethod" label="关联方法" width="140"></el-table-column>
       <el-table-column fixed="right" label="操作" width="120" align="center">
         <template slot-scope="scope">
           <el-button @click="documentDetail(scope.row)" type="text" size="small">详情</el-button>
@@ -217,12 +216,24 @@ export default {
       },
       createTimeRange:[],
       createTimeRangeOptions:{
-        shortcuts: [{
+        shortcuts: [
+          {
+            text: '10分钟',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - (1000 * 60 * 10));
+              end.setTime(end.getTime() + (1000 * 60 * 10))
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
           text: '30分钟',
           onClick(picker) {
             const end = new Date();
             const start = new Date();
             start.setTime(start.getTime() - (1000 * 60 * 30));
+            end.setTime(end.getTime() + (1000 * 60 * 10))
             picker.$emit('pick', [start, end]);
           }
         }, {
@@ -297,7 +308,7 @@ export default {
     setTimeRange(){
       var date = new Date();
       this.createTimeRange[0] = date.getTime() - (1000 * 60 * 60 * 24)
-      this.createTimeRange[1] = date.getTime()
+      this.createTimeRange[1] = date.getTime() + (1000 * 60 * 60 * 8)
     },
     documentDetail(row) {
       this.currentRow = {}

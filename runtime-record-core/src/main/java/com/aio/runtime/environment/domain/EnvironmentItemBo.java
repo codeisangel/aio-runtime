@@ -13,6 +13,8 @@ public class EnvironmentItemBo {
     private String environmentGroup;
     private String propertyKey;
     private String propertyValue;
+    private Boolean isEfficient;
+    private String efficientValue;
     private String propertyDesc;
     private String propertyType;
 

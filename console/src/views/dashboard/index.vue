@@ -14,7 +14,6 @@
          <el-alert :title="'系统开始时间 : ' + systemStartingTime" type="success" :closable="false" show-icon style="margin-bottom: 8px"></el-alert>
          <el-alert :title="'系统启动时间 : ' + systemStartedTime" type="success" :closable="false" show-icon style="margin-bottom: 8px"></el-alert>
          <el-alert :title="'程序PID :     ' + currentPid" type="warning" :closable="false" show-icon style="margin-bottom: 8px"></el-alert>
-
        </el-card>
      </el-col>
      <el-col :span="6">
@@ -28,29 +27,28 @@
      </el-col>
      <el-col :span="8"  style="height: 240px;">
        <el-card class="box-card" style="height: 240px;">
-         <el-result icon="success" :title="runtimeVersion" subTitle="当前系统版本">
-         </el-result>
-       </el-card>
-     </el-col>
-     <el-col :span="12" style="margin-top: 15px;">
-       <el-card class="box-card" style="height: 240px;">
-         <el-result icon="success" :title="runtimeVersion" subTitle="当前系统版本">
-         </el-result>
-       </el-card>
-     </el-col>
-     <el-col :span="12" style="margin-top: 15px;">
-       <el-card class="box-card" style="height: 240px;">
-         <el-result icon="success" :title="runtimeVersion" subTitle="当前系统版本">
-         </el-result>
-       </el-card>
-     </el-col>
-     <el-col :span="12" style="margin-top: 15px;">
-       <el-card class="box-card" style="height: 240px;">
-         <el-result icon="success" :title="runtimeVersion" subTitle="当前系统版本">
-         </el-result>
-       </el-card>
-     </el-col>
 
+       </el-card>
+     </el-col>
+     <el-col :span="24" style="margin-top: 15px;">
+       <el-card class="box-card" style="height: 500px;">
+         <div slot="header" class="clearfix">
+           <span>Jvm内存情况</span>
+         </div>
+          <memory-line ref="memoryLine" />
+       </el-card>
+     </el-col>
+     <el-col :span="24" style="margin-top: 15px;">
+       <el-card class="box-card" style="height: 500px;">
+         <el-card class="box-card" style="height: 500px;">
+           <div slot="header" class="clearfix">
+             <span>线程数量</span>
+             <el-button style="float: right; padding: 3px 0" type="text" @click="clearJvmStatisticsBtn">清除数据</el-button>
+           </div>
+           <memory-line ref="threadLine" class-name="thread-chart"/>
+         </el-card>
+       </el-card>
+     </el-col>
 
    </el-row>
 
@@ -59,19 +57,26 @@
 
 <script>
 import {
-  getHostInfoApi, getOSApi, getPIDApi,
+  clearJvmDataApi,
+  getHostInfoApi, getMemoryChartLineApi, getOSApi, getPIDApi,
   getRunTimeVersionApi,
   getRunTimeWorkspaceApi,
   getSystemStartedTimeApi,
   getSystemStartingTimeApi
 } from "@/api/runtimeApi";
+import MemoryLine from "@/views/dashboard/components/memoryLine.vue";
+
+
 
 export default {
   name: 'Dashboard',
+  components: {MemoryLine},
   data() {
     return {
       runtimeVersion:'',
       runTimeWorkspace:'',
+      memoryChartLineMap:{},
+      threadChartLineMap:{},
       systemStartingTime:'',
       systemStartedTime:'',
       currentPid:'',
@@ -81,6 +86,7 @@ export default {
   },
   created() {
     this.getRuntimeVersion()
+    this.getChartLine()
   },
   methods: {
     getRuntimeVersion() {
@@ -104,6 +110,20 @@ export default {
       })
       getOSApi().then(rsp => {
         this.osInfo = rsp.data;
+      })
+
+    },
+    getChartLine(){
+      getMemoryChartLineApi().then(rsp => {
+        this.memoryChartLineMap = rsp.data.memory;
+        this.threadChartLineMap = rsp.data.thread;
+        this.$refs.memoryLine.refreshChart(this.memoryChartLineMap)
+        this.$refs.threadLine.refreshChart(this.threadChartLineMap)
+      })
+    },
+    clearJvmStatisticsBtn(){
+      clearJvmDataApi().then(rsp => {
+        this.$message.success(rsp.msg)
       })
     }
   }

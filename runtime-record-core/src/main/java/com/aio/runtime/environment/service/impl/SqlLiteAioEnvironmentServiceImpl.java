@@ -1,5 +1,6 @@
 package com.aio.runtime.environment.service.impl;
 
+import cn.hutool.core.comparator.VersionComparator;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
@@ -30,6 +31,7 @@ import org.springframework.boot.actuate.env.EnvironmentEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
@@ -58,6 +60,9 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
         public static final String PROPERTY_TYPE = "property_type";
     }
     private DataSource ds;
+
+    @Value("${runtime.version}")
+    private String version;
     private static final String TABLE_NAME = "aio_environment";
     @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
     private String projectWorkspace;
@@ -69,22 +74,36 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
     @Autowired(required = false)
     private EnvironmentEndpoint environmentEndpoint;
 
+    @Autowired
+    private Environment environmentContext;
+
     private Map<String,EnvironmentItemDictBo> environmentDictMap = new HashMap<>();
     @EventListener
     public void listenerApplicationReadyEvent(ApplicationReadyEvent event){
         log.debug("应用已经准备就绪-事件 读取环境并存储入库 ： {} ", DateUtil.now());
+        visitUrl();
         ThreadUtil.execute(new Runnable() {
             @Override
             public void run() {
+                deleteDataSource();
                 // 读取字典
                 readDict();
                 // 初始化数据源
                 initDataSource();
                 // 读取环境配置
                 readEnvironments();
-                visitUrl();
             }
         });
+    }
+    private void deleteDataSource(){
+        int compare = VersionComparator.INSTANCE.compare(version, "1.0.21");
+        if (compare>0){
+            String environmentPath = StrUtil.format("{}/aio_environment.db",projectWorkspace);
+            boolean del = FileUtil.del(environmentPath);
+            log.info("读取环境并存储入库。 当前版本 : {} 大于 [ 1.0.21 ] 删除结果 : [ {} ] 环境SQL文件 ： {} ",version,del,environmentPath);
+        }
+
+
     }
     private void visitUrl(){
         HostInfo hostInfo = SystemUtil.getHostInfo();
@@ -192,6 +211,7 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
         if (ObjectUtil.isEmpty(propertySources)){
             return;
         }
+
         List<EnvironmentItemBo> itemBoList = new ArrayList<>();
         for (EnvironmentEndpoint.PropertySourceDescriptor propertySource : propertySources) {
 
@@ -202,6 +222,7 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
                 continue;
             }
             for (String propertyKey : properties.keySet()) {
+                String efficientValue = environmentContext.getProperty(propertyKey);
                 EnvironmentEndpoint.PropertyValueDescriptor propertyValueDescriptor = properties.get(propertyKey);
                 if (ObjectUtil.isNull(propertyValueDescriptor)){
                     continue;
@@ -210,12 +231,21 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
                 if (ObjectUtil.isNull(value)){
                     continue;
                 }
+
                 EnvironmentItemBo itemBo = new EnvironmentItemBo();
                 itemBo.setId(IdUtil.getSnowflakeNextIdStr());
                 itemBo.setEnvironmentGroup(environmentGroup);
                 itemBo.setPropertyKey(propertyKey);
                 itemBo.setPropertyValue(value.toString());
                 itemBo.setPropertyType(value.getClass().getSimpleName());
+
+                if (StringUtils.equals(value.toString(),efficientValue)){
+                    itemBo.setIsEfficient(true);
+                }else {
+                    itemBo.setIsEfficient(false);
+                }
+                itemBo.setEfficientValue(efficientValue);
+
                 itemBoList.add(itemBo);
             }
         }
@@ -228,6 +258,8 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
             EnvironmentItemDictBo dictBo = environmentDictMap.get(itemBo.getPropertyKey());
             Entity entity = Entity.create()
                     .set("property_value", itemBo.getPropertyValue())
+                    .set("is_efficient", itemBo.getIsEfficient())
+                    .set("efficient_value", itemBo.getEfficientValue())
                     .set("property_desc", itemBo.getPropertyDesc())
                     .set("property_type", itemBo.getPropertyType());
 
@@ -253,6 +285,8 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
                     .set("environment_group", itemBo.getEnvironmentGroup())
                     .set("property_key", itemBo.getPropertyKey())
                     .set("property_value", itemBo.getPropertyValue())
+                    .set("efficient_value", itemBo.getEfficientValue())
+                    .set("is_efficient", itemBo.getIsEfficient())
                     .set("property_desc", itemBo.getPropertyDesc())
                     .set("property_type", itemBo.getPropertyType());
 
@@ -297,6 +331,8 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
                 sql.append("  \"environment_group\" text,");
                 sql.append("  \"property_key\" text,");
                 sql.append("  \"property_value\" text,");
+                sql.append("  \"is_efficient\" integer,");
+                sql.append("  \"efficient_value\" text,");
                 sql.append("  \"property_desc\" text,");
                 sql.append("  \"property_type\" text,");
                 sql.append("  PRIMARY KEY (\"id\") )");

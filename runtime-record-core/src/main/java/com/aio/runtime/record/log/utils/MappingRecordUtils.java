@@ -13,6 +13,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.MDC;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -22,6 +23,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +33,36 @@ import java.util.Map;
  */
 
 public class MappingRecordUtils {
+    private static AntPathMatcher pathMatcher = new AntPathMatcher();
+    public static boolean matcherUrl(List<String> blackUrlList){
+        if (ObjectUtil.isEmpty(blackUrlList)){
+            return false;
+        }
+
+        RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+        if (ObjectUtil.isEmpty(attributes)){
+            return false;
+        }
+
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) attributes;
+        if (ObjectUtil.isEmpty(servletRequestAttributes)){
+            return false;
+        }
+
+        HttpServletRequest request = servletRequestAttributes.getRequest();
+        if (ObjectUtil.isEmpty(request)){
+            return false;
+        }
+
+        for (String url : blackUrlList) {
+            boolean match = pathMatcher.match(url, request.getRequestURI());
+            if (match){
+                return match;
+            }
+        }
+
+        return false;
+    }
     public static MappingRecordBo builder(JoinPoint joinPoint){
         if (ObjectUtil.isEmpty(joinPoint)){
             return null;
@@ -92,6 +124,7 @@ public class MappingRecordUtils {
 
         handleParams(mappingRecordBo,joinPoint);
     }
+
     private static void handleHttp(MappingRecordBo mappingRecordBo){
         if (ObjectUtil.isEmpty(mappingRecordBo)){
             return;

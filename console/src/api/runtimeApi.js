@@ -49,3 +49,17 @@ export function getOSApi() {
     method: 'get'
   })
 }
+
+export function getMemoryChartLineApi() {
+  return request({
+    url: '/runtime/aio/jvm/memory/chart/line',
+    method: 'get'
+  })
+}
+
+export function clearJvmDataApi() {
+  return request({
+    url: '/runtime/aio/jvm/clear',
+    method: 'delete'
+  })
+}

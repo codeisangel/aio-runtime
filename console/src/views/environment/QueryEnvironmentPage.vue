@@ -47,10 +47,19 @@
             <el-form-item label="配置值">
               <span style="color: #409EFF;">{{ props.row.propertyValue }}</span>
             </el-form-item>
+            <el-form-item label="生效值">
+              <span style="color: #409EFF;">{{ props.row.efficientValue }}</span>
+            </el-form-item>
           </el-form>
         </template>
       </el-table-column>
       <el-table-column prop="environmentGroup" label="配置分组" width="320"></el-table-column>
+      <el-table-column label="是否生效" width="80" align="center">
+        <template slot-scope="scope">
+          <span v-if="scope.row.isEfficient" style="color: #409EFF;">{{scope.row.isEfficient}}</span>
+          <span v-else style="color: #FF5722;">{{scope.row.isEfficient}}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="propertyKey" label="配置项" min-width="200" align="left"></el-table-column>
 
       <el-table-column label="配置值" min-width="260">

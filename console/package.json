@@ -16,6 +16,7 @@
   "dependencies": {
     "axios": "0.18.1",
     "core-js": "3.6.5",
+    "echarts": "^5.5.1",
     "element-ui": "2.15.14",
     "highlight.js": "^11.7.0",
     "js-cookie": "2.2.0",
@@ -24,11 +25,9 @@
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",
     "vue": "2.6.10",
+    "vue-json-viewer": "^2.2.22",
     "vue-router": "3.0.6",
     "vuex": "3.1.0"
-  },
-  "peerDependencies": {
-
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "4.4.4",

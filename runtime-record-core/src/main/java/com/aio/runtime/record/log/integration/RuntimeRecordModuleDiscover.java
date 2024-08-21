@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 public class RuntimeRecordModuleDiscover implements AioDiscover {
-    @Value("${version}")
+    @Value("${runtime.version}")
     private String version;
     @Override
     public String getVersion() {

@@ -60,9 +60,12 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
     private String projectWorkspace;
 
     private String getIndexName() {
-        String indexName = StrUtil.format("aio_log_{}", DateUtil.format(new Date(), DAY_FORMAT));
+        String indexName = StringUtils.equals(logAppendProperties.getIndexPeriod(),"hour")
+                ? StrUtil.format("aio_log_{}", DateUtil.format(new Date(), HOUR_FORMAT))
+                : StrUtil.format("aio_log_{}", DateUtil.format(new Date(), DAY_FORMAT));
         return indexName;
     }
+
 
     private Collection<Document> loadDocs(List<AioLogBo> list) {
         Collection<Document> docs = new ArrayList<>();
@@ -136,7 +139,7 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
         String indexPath = StrUtil.format("{}/{}/data/", projectWorkspace, LOG_CATALOGUE_NAME);
         List<File> files = FileUtil.loopFiles(Paths.get(indexPath), 1, null);
         Date now = new Date();
-        Date deadline = DateUtil.offsetDay(now, (0 - logAppendProperties.getPastday()));
+        Date deadline = DateUtil.offsetDay(now, (0 - logAppendProperties.getPastDay()));
         for (File file : files) {
             String name = file.getName();
             name = name.replaceFirst("aio_log_", "");

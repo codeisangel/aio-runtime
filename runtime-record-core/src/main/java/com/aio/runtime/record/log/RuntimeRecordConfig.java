@@ -4,9 +4,11 @@ import com.aio.runtime.beans.AioRuntimeBeansConfig;
 import com.aio.runtime.cache.AioCacheManageConfig;
 import com.aio.runtime.jvm.AioJvmConfig;
 import com.aio.runtime.log.AioLogAppendConfig;
+import com.aio.runtime.record.log.config.properties.AioMappingLogProperties;
 import com.aio.runtime.security.RuntimeSecurityConfig;
 import com.aio.runtime.subscribe.AioSubscribeConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -36,6 +38,7 @@ import org.springframework.context.annotation.PropertySource;
         AioCacheManageConfig.class
 
         })
+@EnableConfigurationProperties(AioMappingLogProperties.class)
 @PropertySource("classpath:runtime-log-version.properties")
 public class RuntimeRecordConfig {
 

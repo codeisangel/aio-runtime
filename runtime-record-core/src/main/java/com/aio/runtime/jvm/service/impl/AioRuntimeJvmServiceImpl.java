@@ -3,13 +3,18 @@ package com.aio.runtime.jvm.service.impl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.aio.runtime.db.orm.conditions.AioQueryCondition;
 import com.aio.runtime.db.orm.service.AbstractAioSimpleMapper;
 import com.aio.runtime.jvm.domain.AioJvmBo;
 import com.aio.runtime.jvm.domain.AioJvmCollectBo;
+import com.aio.runtime.jvm.domain.QueryJvmParams;
 import com.aio.runtime.jvm.service.AioRuntimeJvmService;
 import com.alibaba.fastjson.JSON;
 import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
+import com.kgo.flow.common.domain.page.KgoPage;
+import com.kgo.flow.common.domain.page.PageResult;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +43,7 @@ public class AioRuntimeJvmServiceImpl extends AbstractAioSimpleMapper<AioJvmBo> 
     private String projectWorkspace;
     @Autowired(required = false)
     private MetricsEndpoint metricsEndpoint;
-    private ScheduledExecutorService executorJvmStatisticsTaskService = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService executorJvmStatisticsTaskService = Executors.newScheduledThreadPool(2);
     private void initDataSource() {
         if (!FileUtil.exist(projectWorkspace)) {
             FileUtil.mkdir(projectWorkspace);
@@ -78,7 +83,7 @@ public class AioRuntimeJvmServiceImpl extends AbstractAioSimpleMapper<AioJvmBo> 
             jvmStatistics();
         };
         executorJvmStatisticsTaskService.scheduleAtFixedRate(task, 1, 10, TimeUnit.MINUTES);
-        //executorJvmStatisticsTaskService.scheduleAtFixedRate(task, 5, 10, TimeUnit.SECONDS);
+        //executorJvmStatisticsTaskService.scheduleAtFixedRate(task, 1, 5, TimeUnit.SECONDS);
     }
 
     private void jvmStatistics(){
@@ -90,8 +95,33 @@ public class AioRuntimeJvmServiceImpl extends AbstractAioSimpleMapper<AioJvmBo> 
         }
         jvmCollectBo.setCreateTime(new Date());
         addRow(jvmCollectBo);
-        log.info("收集的数据 ： {} ", JSON.toJSONString(jvmCollectBo));
+        log.debug("收集的数据 ： {} ", JSON.toJSONString(jvmCollectBo));
     }
 
-
+    @Override
+    public void clearStatisticsData(){
+        KgoPage page = new KgoPage();
+        page.setPageSize(2000);
+        AioQueryCondition<AioJvmBo> conditions = new AioQueryCondition<>();
+        Date dateTime = DateUtil.offsetDay(new Date(), -60);
+        conditions.lt(AioJvmBo::getCreateTime, dateTime.getTime());
+        PageResult<AioJvmBo> pageResultBo = getPage(conditions, page);
+        log.info("截止时间 ： {}  查询的数据数量 ： {} ",dateTime,pageResultBo.getTotal());
+        for (AioJvmBo jvmBo : pageResultBo.getList()) {
+            log.debug("jvm 时间 ： {}  , 创建时间 {} ",DateUtil.formatDateTime(jvmBo.getCreateTime()));
+            deleteById(jvmBo.getId());
+        }
+    }
+    @Override
+    public PageResult<AioJvmBo> getPage(QueryJvmParams params, KgoPage page) {
+        AioQueryCondition<AioJvmBo> conditions = new AioQueryCondition<>();
+        if (ObjectUtil.isNotEmpty(params.getCreateTimeRange())) {
+            Long start = params.getCreateTimeRange()[0];
+            conditions.gt(AioJvmBo::getCreateTime,new Date(start));
+            Long end = params.getCreateTimeRange()[1];
+            conditions.lt(AioJvmBo::getCreateTime,new Date(end));
+        }
+        PageResult<AioJvmBo> pageResultBo = getPage(conditions, page);
+        return pageResultBo;
+    }
 }

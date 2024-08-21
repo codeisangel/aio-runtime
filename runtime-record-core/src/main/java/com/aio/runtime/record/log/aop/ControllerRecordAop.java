@@ -2,6 +2,7 @@ package com.aio.runtime.record.log.aop;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.aio.runtime.mappings.statistic.MappingVisitStatisticsUtils;
+import com.aio.runtime.record.log.config.properties.AioMappingLogProperties;
 import com.aio.runtime.record.log.controller.MappingLogController;
 import com.aio.runtime.record.log.domain.MappingRecordBo;
 import com.aio.runtime.record.log.service.MappingLogService;
@@ -29,6 +30,9 @@ import org.springframework.stereotype.Component;
 public class ControllerRecordAop {
     @Autowired
     private MappingLogService mappingLogService;
+    @Autowired
+    private AioMappingLogProperties properties;
+
     @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping) || " +
             "@annotation(org.springframework.web.bind.annotation.GetMapping) || " +
             "@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
@@ -37,10 +41,22 @@ public class ControllerRecordAop {
     public void pointcut() {
     }
 
-
+    /**
+     *  判断是不是黑名单，如果返回true 是黑名单，如果返回false 表示不是黑名单
+     * @return
+     */
+    private boolean isBlank(){
+        if (ObjectUtil.isNull(properties)) {
+            return false;
+        }
+       return MappingRecordUtils.matcherUrl(properties.getBlackList());
+    }
     @AfterReturning(pointcut = "pointcut()",returning = "result")
     public void afterReturning(JoinPoint joinPoint, Object result) {
         if (joinPoint.getTarget() instanceof MappingLogController) {
+            return;
+        }
+        if (isBlank()) {
             return;
         }
         MappingRecordBo builder = MappingRecordUtils.builder(joinPoint);
@@ -55,6 +71,9 @@ public class ControllerRecordAop {
 
     @AfterThrowing(pointcut = "pointcut()",throwing = "e")
     public void afterThrowing(JoinPoint joinPoint, Throwable e){
+        if (isBlank()) {
+            return;
+        }
         MappingRecordBo builder = MappingRecordUtils.builder(joinPoint);
         builder.setSuccess(false);
         MappingVisitStatisticsUtils.count(builder.getMappingClass(), builder.getMappingMethod());

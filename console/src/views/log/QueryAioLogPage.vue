@@ -420,10 +420,6 @@ export default {
       this.pageParams.pageSize = this.currentPageSize;
       getLogPageApi(this.queryTable,this.pageParams).then(rsp => {
         this.articleTable = rsp.data.list;
-        this.tableHeight =  rsp.data.list.length * 50
-        if (this.tableHeight < 600){
-          this.tableHeight = 600
-        }
         this.tableTotal = rsp.data.total;
       }).catch(err => {
         this.$message.error(err)

@@ -14,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @Slf4j
+
 public class RuntimeLogWebViewConfig implements WebMvcConfigurer {
 
     @Override

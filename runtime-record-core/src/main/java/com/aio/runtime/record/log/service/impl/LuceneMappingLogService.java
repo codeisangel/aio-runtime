@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -46,8 +47,24 @@ import java.util.List;
 @Slf4j
 public class LuceneMappingLogService extends AbstractMappingLogService {
     public static final String MAPPING_LOG_CATALOGUE_NAME = "mappingLog";
+
     @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
     private String projectWorkspace;
+
+    private static final String DAY_FORMAT = "yyyyMMdd";
+    private static final String INDEX_PREFIX ="aio_mapping_log_";
+    private String getIndexName() {
+        return StrUtil.format("{}{}", INDEX_PREFIX,DateUtil.format(new Date(), DAY_FORMAT));
+    }
+    private String getIndexPath(){
+        String indexPath = StrUtil.format("{}/{}/data/{}", projectWorkspace, MAPPING_LOG_CATALOGUE_NAME, getIndexName());
+        if (!FileUtil.exist(indexPath)) {
+            FileUtil.mkdir(indexPath);
+        }
+        return indexPath;
+    }
+
+
 
     @Override
     public void batchSave(List<MappingRecordBo> recordList) {
@@ -67,9 +84,7 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
 
         IndexWriter indexWriter = null;
         try {
-            File file = FileUtil.file(projectWorkspace);
-            Path path = Paths.get(file.getAbsolutePath()).resolve(MAPPING_LOG_CATALOGUE_NAME);
-            Directory directory = FSDirectory.open(path);
+            Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(getIndexPath()));
             NRTCachingDirectory nrtCachingDirectory = new NRTCachingDirectory(directory, 5, 60);
             SmartChineseAnalyzer smartChineseAnalyzer = new SmartChineseAnalyzer();
             IndexWriterConfig indexWriterConfig = new IndexWriterConfig(smartChineseAnalyzer);
@@ -89,14 +104,30 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
                 }
             }
         }
-
-
     }
 
+    private IndexSearcher getSearcher(){
+        String indexPath = StrUtil.format("{}/{}/data/", projectWorkspace, MAPPING_LOG_CATALOGUE_NAME);
+        List<File> files = FileUtil.loopFiles(Paths.get(indexPath), 1, null);
+        List<IndexReader> indexReaderList = new ArrayList<>();
+        try {
+            for (File file : files) {
+                Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(file.getAbsolutePath()));
+                IndexReader reader = DirectoryReader.open(directory);
+                indexReaderList.add(reader);
+            }
+            IndexReader[] indexReaders = indexReaderList.toArray(new IndexReader[indexReaderList.size()]);
+            MultiReader multiReader = new MultiReader(indexReaders);
+            IndexSearcher searcher = new IndexSearcher(multiReader);
+            return searcher;
+        }catch (Exception e){
+            log.error("创建接口访问记录查询引擎失败。异常类[ {} ] , 异常信息[ {} ] , 异常追踪 ： {} ",e.getClass(),e.getMessage(),e.getStackTrace());
+            return null;
+        }
+
+    }
     @Override
     public PageResult searchRecords(QueryRecordParams params, KgoPage page) {
-        File file = FileUtil.file(projectWorkspace);
-        Path path = Paths.get(file.getAbsolutePath()).resolve(MAPPING_LOG_CATALOGUE_NAME);
 
         BooleanQuery.Builder builder = builderQuery(params);
 
@@ -109,9 +140,8 @@ public class LuceneMappingLogService extends AbstractMappingLogService {
         PageResult pageResult = new PageResult<>();
         log.debug("查询条件 ： {} ", builder.build().toString());
         try {
-            Directory directory = FSDirectory.open(path);
-            DirectoryReader reader = DirectoryReader.open(directory);
-            IndexSearcher searcher = new IndexSearcher(reader);
+
+            IndexSearcher searcher = getSearcher();
             TopDocs topDocs = searcher.search(builder.build(), needTotal, sort);
             ScoreDoc[] scoreDocs = topDocs.scoreDocs;
             List<MappingRecordVo> mappingRecordList = new ArrayList<>();
