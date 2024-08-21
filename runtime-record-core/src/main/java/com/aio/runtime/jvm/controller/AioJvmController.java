@@ -83,7 +83,7 @@ public class AioJvmController {
         resultMap.put("thread",threadChartLine);
 
 
-        log.info("日期数据数量[ {} ] 内存使用数量[ {} ] , 已分配内存数据[ {} ]",dataList.size(),memoryUsedList.size(),memoryCommittedList.size());
+        log.debug("日期数据数量[ {} ] 内存使用数量[ {} ] , 已分配内存数据[ {} ]",dataList.size(),memoryUsedList.size(),memoryCommittedList.size());
         return AmisResult.success(resultMap);
     }
 }
