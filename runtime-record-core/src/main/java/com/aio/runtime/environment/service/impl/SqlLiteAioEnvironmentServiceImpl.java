@@ -111,7 +111,7 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
             return;
         }
         String address = hostInfo.getAddress();
-        System.out.println(StrUtil.format("项目运行时访问地址 :   http://{}:{}/view/runtime",address,port));
+        System.out.println(StrUtil.format("项目运行时 , 版本号 : [  {}  ] 访问地址 :   http://{}:{}/view/runtime",version,address,port));
     }
     private void readDict(){
         try {

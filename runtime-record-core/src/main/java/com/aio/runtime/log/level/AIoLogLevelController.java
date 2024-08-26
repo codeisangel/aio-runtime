@@ -1,6 +1,7 @@
 package com.aio.runtime.log.level;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.aio.runtime.log.domain.SetLogLevelParams;
 import com.kgo.flow.common.domain.amis.AmisResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -50,7 +51,7 @@ public class AIoLogLevelController {
         return AmisResult.success(configurationList);
     }
     @PutMapping
-    public AmisResult setLogLevel(@RequestBody LoggerConfiguration log){
+    public AmisResult setLogLevel(@RequestBody SetLogLevelParams log){
         loggersEndpoint.configureLogLevel(log.getName(), log.getConfiguredLevel());
         return AmisResult.successMsg("设置日志级别成功");
     }
