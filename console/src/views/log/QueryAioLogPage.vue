@@ -21,7 +21,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="5">
-            <el-form-item label="处理状态">
+            <el-form-item label="日志级别">
               <el-select v-model="queryTable.level" style="width: 280px;" clearable placeholder="请选择日志级别" @change="queryTableBtn">
                 <el-option label="TRACE" value="TRACE"></el-option>
                 <el-option label="DEBUG" value="DEBUG"></el-option>

@@ -44,11 +44,6 @@
 
         </el-col>
 
-        <el-col :span="4">
-          <el-form-item label="请求地址">
-            <el-input v-model="queryTable.url"></el-input>
-          </el-form-item>
-        </el-col>
 
         <el-col :span="4">
           <el-form-item label="是否成功">
@@ -61,6 +56,12 @@
           </el-form-item>
         </el-col>
 
+        <el-col :span="8">
+          <el-form-item label="请求地址" class="url-input-style">
+            <el-input v-model="queryTable.url"></el-input>
+          </el-form-item>
+        </el-col>
+
 
         <el-col :span="8">
           <el-form-item label="发生时间">
@@ -68,7 +69,7 @@
           </el-form-item>
         </el-col>
 
-        <el-col :offset="6" :span="2">
+        <el-col :offset=1 :span="3">
           <el-form-item>
             <el-button @click="queryTablePage">清除</el-button>
             <el-button type="primary" @click="queryTablePage">查询</el-button>
@@ -94,7 +95,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" width="150" align="center"></el-table-column>
-      <el-table-column prop="companyName" label="企业名称" width="200"></el-table-column>
+      <el-table-column prop="traceId" label="追踪码" width="200"></el-table-column>
       <el-table-column prop="userName" label="用户名称" min-width="100" align="center"></el-table-column>
       <el-table-column fixed="right" label="操作" width="120" align="center">
         <template slot-scope="scope">
@@ -343,3 +344,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.url-input-style .el-input{
+  width: 420px;
+}
+</style>

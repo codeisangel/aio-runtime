@@ -2,11 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.aio1024.runtime</groupId>
+        <groupId>cn.aio1024.runtime</groupId>
         <artifactId>aio-runtime-record</artifactId>
         <version>${revision}</version>
     </parent>
-
 
     <artifactId>runtime-record-core</artifactId>
     <packaging>jar</packaging>
@@ -47,10 +46,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.kgo.framework.basic</groupId>
-            <artifactId>basic-all</artifactId>
-            <version>${basic.all.version}</version>
-            <optional>true</optional>
+            <groupId>cn.aio1024.common</groupId>
+            <artifactId>domain-basic</artifactId>
+            <version>1.0.1</version>
         </dependency>
 
         <dependency>
@@ -74,13 +72,6 @@
             <groupId>com.alibaba</groupId>
             <artifactId>transmittable-thread-local</artifactId>
             <version>2.11.5</version>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>com.plumelog</groupId>
-            <artifactId>plumelog-lite</artifactId>
-            <version>3.5.3</version>
             <optional>true</optional>
         </dependency>
 
