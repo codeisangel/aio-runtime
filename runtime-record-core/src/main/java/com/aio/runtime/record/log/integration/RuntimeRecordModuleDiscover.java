@@ -1,8 +1,8 @@
 package com.aio.runtime.record.log.integration;
 
-import com.kgo.framework.basic.discover.AioDiscover;
-import com.kgo.framework.basic.discover.domain.ModuleDetails;
-import com.kgo.framework.basic.discover.domain.ModuleEnvironmentVariable;
+import cn.aio1024.framework.basic.discover.AioDiscover;
+import cn.aio1024.framework.basic.discover.domain.ModuleDetails;
+import cn.aio1024.framework.basic.discover.domain.ModuleEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

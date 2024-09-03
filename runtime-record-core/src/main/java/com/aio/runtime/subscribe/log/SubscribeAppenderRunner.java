@@ -1,7 +1,7 @@
 package com.aio.runtime.subscribe.log;
 
 import ch.qos.logback.classic.LoggerContext;
-import com.kgo.framework.basic.integration.user.AioUserApi;
+import cn.aio1024.framework.basic.integration.user.AioUserApi;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.impl.StaticLoggerBinder;

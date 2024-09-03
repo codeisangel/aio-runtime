@@ -15,9 +15,8 @@ import com.aio.runtime.db.orm.service.AbstractAioSimpleMapper;
 import com.aio.runtime.subscribe.log.SubscribeMarker;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
-import com.kgo.flow.common.domain.page.KgoPage;
-import com.kgo.flow.common.domain.page.PageResult;
+import cn.aio1024.framework.basic.domain.page.KgoPage;
+import cn.aio1024.framework.basic.domain.page.PageResult;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +44,7 @@ public class SqlLiteBeansServiceImpl extends AbstractAioSimpleMapper<AioBeanBo> 
     @Autowired(required = false)
     private BeansEndpoint beansEndpoint;
 
-    @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
+    @Value("${project.workspace.path}")
     private String projectWorkspace;
 
     @Override

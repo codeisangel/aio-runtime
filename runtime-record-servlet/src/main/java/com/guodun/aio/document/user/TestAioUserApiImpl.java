@@ -1,8 +1,8 @@
 package com.guodun.aio.document.user;
 
 import cn.hutool.core.util.IdUtil;
-import com.kgo.framework.basic.integration.user.AioUserApi;
-import com.kgo.framework.basic.integration.user.domain.AioUser;
+import cn.aio1024.framework.basic.integration.user.AioUserApi;
+import cn.aio1024.framework.basic.integration.user.domain.AioUser;
 import org.springframework.stereotype.Component;
 
 /**

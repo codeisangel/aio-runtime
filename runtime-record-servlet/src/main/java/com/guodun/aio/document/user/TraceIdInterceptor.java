@@ -1,7 +1,7 @@
 package com.guodun.aio.document.user;
 
 import cn.hutool.core.util.IdUtil;
-import com.kgo.framework.basic.domain.trace.TraceId;
+import cn.aio1024.framework.basic.domain.trace.TraceId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;

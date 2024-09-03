@@ -1,5 +1,9 @@
 package com.aio.runtime.beans.controller;
 
+import cn.aio1024.framework.basic.adapter.user.annotations.AioSecurityVerify;
+import cn.aio1024.framework.basic.domain.amis.AmisResult;
+import cn.aio1024.framework.basic.domain.page.KgoPage;
+import cn.aio1024.framework.basic.domain.page.PageResult;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
@@ -11,10 +15,6 @@ import com.aio.runtime.beans.domain.RunMethodParameter;
 import com.aio.runtime.beans.service.IAioBeansService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.kgo.flow.common.domain.amis.AmisResult;
-import com.kgo.flow.common.domain.page.KgoPage;
-import com.kgo.flow.common.domain.page.PageResult;
-import com.kgo.framework.basic.adapter.user.annotations.AioSecurityVerify;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

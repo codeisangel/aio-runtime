@@ -1,8 +1,8 @@
 package com.aio.runtime.security;
 
 import com.aio.runtime.security.domain.RuntimeSecurityProperties;
-import com.kgo.framework.basic.adapter.user.AioSecurityAdapter;
-import com.kgo.framework.basic.adapter.user.impl.AioSecurityAdapter4RAM;
+import cn.aio1024.framework.basic.adapter.user.AioSecurityAdapter;
+import cn.aio1024.framework.basic.adapter.user.impl.AioSecurityAdapter4RAM;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

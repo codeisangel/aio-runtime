@@ -1,10 +1,10 @@
 package com.aio.runtime.mappings.controller;
 
+import cn.aio1024.framework.basic.domain.amis.AmisResult;
+import cn.aio1024.framework.basic.domain.page.KgoPage;
+import cn.aio1024.framework.basic.domain.page.PageResult;
 import com.aio.runtime.mappings.domain.QueryMappingParams;
 import com.aio.runtime.mappings.service.IAioMappingService;
-import com.kgo.flow.common.domain.amis.AmisResult;
-import com.kgo.flow.common.domain.page.KgoPage;
-import com.kgo.flow.common.domain.page.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.web.mappings.MappingsEndpoint;

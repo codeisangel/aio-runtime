@@ -1,5 +1,7 @@
 package com.aio.runtime.log.service;
 
+import cn.aio1024.framework.basic.domain.page.KgoPage;
+import cn.aio1024.framework.basic.domain.page.PageResult;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.thread.ThreadUtil;
@@ -9,9 +11,6 @@ import cn.hutool.core.util.StrUtil;
 import com.aio.runtime.db.orm.conditions.AioQueryCondition;
 import com.aio.runtime.db.orm.service.AbstractAioSimpleMapper;
 import com.aio.runtime.log.domain.AioLogParamsBo;
-import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
-import com.kgo.flow.common.domain.page.KgoPage;
-import com.kgo.flow.common.domain.page.PageResult;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +31,7 @@ import java.util.List;
 @Service
 @Slf4j
 public class AioLogQuerySchemeService extends AbstractAioSimpleMapper<AioLogParamsBo> {
-    @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
+    @Value("${project.workspace.path}")
     private String projectWorkspace;
 
     public List<AioLogParamsBo> getList(){

@@ -5,7 +5,7 @@ import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.aio.runtime.subscribe.log.SubscribeMarker;
-import com.kgo.flow.common.domain.amis.AmisResult;
+import cn.aio1024.framework.basic.domain.amis.AmisResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;

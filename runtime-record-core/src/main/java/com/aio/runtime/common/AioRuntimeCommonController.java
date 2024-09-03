@@ -1,9 +1,8 @@
 package com.aio.runtime.common;
 
+import cn.aio1024.framework.basic.domain.amis.AmisResult;
 import cn.hutool.system.*;
 import com.aio.runtime.common.info.SystemRuntimeInfo;
-import com.kgo.flow.common.domain.amis.AmisResult;
-import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +19,7 @@ public class AioRuntimeCommonController {
     @Value("${runtime.version}")
     private String version;
 
-    @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
+    @Value("${project.workspace.path}")
     private String projectWorkspace;
 
     @GetMapping("/runtime/aio/version")

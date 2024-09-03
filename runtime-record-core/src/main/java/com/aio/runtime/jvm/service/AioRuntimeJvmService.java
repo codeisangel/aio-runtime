@@ -2,8 +2,8 @@ package com.aio.runtime.jvm.service;
 
 import com.aio.runtime.jvm.domain.AioJvmBo;
 import com.aio.runtime.jvm.domain.QueryJvmParams;
-import com.kgo.flow.common.domain.page.KgoPage;
-import com.kgo.flow.common.domain.page.PageResult;
+import cn.aio1024.framework.basic.domain.page.KgoPage;
+import cn.aio1024.framework.basic.domain.page.PageResult;
 
 public interface AioRuntimeJvmService {
     PageResult<AioJvmBo> getPage(QueryJvmParams params, KgoPage page);

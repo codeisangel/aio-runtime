@@ -3,7 +3,7 @@ package com.aio.runtime.record.log;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Console;
 import com.aio.runtime.common.info.SystemRuntimeInfo;
-import com.kgo.framework.basic.domain.trace.TraceId;
+import cn.aio1024.framework.basic.domain.trace.TraceId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartingEvent;
 import org.springframework.context.ApplicationListener;

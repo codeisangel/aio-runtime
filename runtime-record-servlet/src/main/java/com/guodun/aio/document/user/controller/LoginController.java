@@ -3,7 +3,7 @@ package com.guodun.aio.document.user.controller;
 import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSON;
 import com.guodun.aio.document.user.domain.params.LoginParams;
-import com.kgo.flow.common.domain.amis.AmisResult;
+import cn.aio1024.framework.basic.domain.amis.AmisResult;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

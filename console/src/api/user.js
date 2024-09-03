@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/security/person/login',
+    url: '/runtime/aio/security/person/login',
     method: 'post',
     data
 })
@@ -11,7 +11,7 @@ export function login(data) {
 export function getInfo(token) {
   return request({
     //url: '/kgo/user',
-    url: '/security/user/login/info',
+    url: '/runtime/aio/security/user/login/info',
     method: 'get',
     params: { token }
   })
@@ -19,7 +19,7 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/security/logout',
+    url: '/runtime/aio/security/logout',
     method: 'post'
   })
 }

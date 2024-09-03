@@ -1,5 +1,7 @@
 package com.aio.runtime.record.log.service.impl;
 
+import cn.aio1024.framework.basic.domain.page.KgoPage;
+import cn.aio1024.framework.basic.domain.page.PageResult;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
@@ -13,9 +15,6 @@ import com.aio.runtime.record.log.domain.RecordInfoVo;
 import com.aio.runtime.record.log.domain.constants.MappingLogFieldConstant;
 import com.aio.runtime.record.log.service.AbstractMappingLogService;
 import com.alibaba.fastjson.JSONObject;
-import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
-import com.kgo.flow.common.domain.page.KgoPage;
-import com.kgo.flow.common.domain.page.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
@@ -48,7 +47,7 @@ import java.util.List;
 public class LuceneMappingLogService extends AbstractMappingLogService {
     public static final String MAPPING_LOG_CATALOGUE_NAME = "mappingLog";
 
-    @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
+    @Value("${project.workspace.path}")
     private String projectWorkspace;
 
     private static final String DAY_FORMAT = "yyyyMMdd";

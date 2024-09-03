@@ -1,5 +1,7 @@
 package com.aio.runtime.subscribe.service.impl;
 
+import cn.aio1024.framework.basic.domain.page.KgoPage;
+import cn.aio1024.framework.basic.domain.page.PageResult;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -14,9 +16,6 @@ import com.aio.runtime.subscribe.domain.enums.SubscibeHandleStatusEnum;
 import com.aio.runtime.subscribe.domain.params.QuerySubscribeLogParams;
 import com.aio.runtime.subscribe.domain.params.UpdateSubscribeLogStatusParams;
 import com.aio.runtime.subscribe.service.AbstractSubscribeLogService;
-import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
-import com.kgo.flow.common.domain.page.KgoPage;
-import com.kgo.flow.common.domain.page.PageResult;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +54,7 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
     private static final String TABLE_NAME = "subscribe_log_record";
     private DataSource ds;
     public static final String SUBSCRIBE_LOG_CATALOGUE_NAME = "subscribeLog";
-    @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
+    @Value("${project.workspace.path}")
     private String projectWorkspace;
 
     /**

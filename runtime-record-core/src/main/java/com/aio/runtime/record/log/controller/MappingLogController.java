@@ -2,9 +2,9 @@ package com.aio.runtime.record.log.controller;
 
 import com.aio.runtime.record.log.domain.QueryRecordParams;
 import com.aio.runtime.record.log.service.MappingLogService;
-import com.kgo.flow.common.domain.amis.AmisResult;
-import com.kgo.flow.common.domain.page.KgoPage;
-import com.kgo.flow.common.domain.page.PageResult;
+import cn.aio1024.framework.basic.domain.amis.AmisResult;
+import cn.aio1024.framework.basic.domain.page.KgoPage;
+import cn.aio1024.framework.basic.domain.page.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

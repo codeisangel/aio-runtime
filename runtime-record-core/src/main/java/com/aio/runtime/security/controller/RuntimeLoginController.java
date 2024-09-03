@@ -1,13 +1,13 @@
 package com.aio.runtime.security.controller;
 
+import cn.aio1024.aio.framework.basic.spring.utils.ServletUtils;
+import cn.aio1024.framework.basic.adapter.user.AioSecurityAdapter;
+import cn.aio1024.framework.basic.domain.amis.AmisResult;
+import cn.aio1024.framework.basic.integration.user.domain.AioUser;
 import cn.hutool.core.util.ObjectUtil;
 import com.aio.runtime.security.domain.LoginParams;
 import com.aio.runtime.security.domain.RuntimeSecurityProperties;
 import com.aio.runtime.security.domain.UserInfoResult;
-import com.kgo.aio.framework.basic.spring.utils.ServletUtils;
-import com.kgo.flow.common.domain.amis.AmisResult;
-import com.kgo.framework.basic.adapter.user.AioSecurityAdapter;
-import com.kgo.framework.basic.integration.user.domain.AioUser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController
 @Slf4j
+@RequestMapping("/runtime/aio")
 public class RuntimeLoginController {
     @Autowired
     private AioSecurityAdapter securityAdapter;
@@ -33,11 +34,11 @@ public class RuntimeLoginController {
 
         if (!StringUtils.equals(loginParams.getUsername(), runtimeSecurityProperties.getUsername())){
             log.error("用户名[ {} ]不是系统配置的用户[ {} ] ",loginParams.getUsername(),runtimeSecurityProperties.getUsername());
-            return AmisResult.fail(50014,"账号或密码错误");
+            return AmisResult.fail(40106,"账号或密码错误");
         }
         if (!StringUtils.equals(loginParams.getPassword(), runtimeSecurityProperties.getPassword())){
             log.error("用户的密码[ {} ] 不正确。",loginParams.getPassword());
-            return AmisResult.fail(50014,"账号或密码错误");
+            return AmisResult.fail(40106,"账号或密码错误");
         }
         AioUser user = new AioUser();
         user.setUserName(loginParams.getUsername());
@@ -62,12 +63,11 @@ public class RuntimeLoginController {
     @PostMapping("/security/logout")
     public void logout() {
         HttpServletRequest request = ServletUtils.getRequest();
-        String token = request.getHeader("Token");
+        String token = request.getHeader("RUNTIME-TOKEN");
         if (StringUtils.isBlank(token)){
-            token = request.getParameter("token");
+            token = request.getParameter("runtimeToken");
         }
         securityAdapter.removeToken(token);
-
 
     }
 }

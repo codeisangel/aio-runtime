@@ -6,7 +6,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.aio.runtime.log.domain.AioLogBo;
 import com.aio.runtime.log.save.LogSaveCache;
-import com.kgo.framework.basic.domain.trace.TraceId;
+import cn.aio1024.framework.basic.domain.trace.TraceId;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;

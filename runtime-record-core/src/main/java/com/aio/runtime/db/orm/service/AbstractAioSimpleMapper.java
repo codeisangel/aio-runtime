@@ -15,8 +15,8 @@ import com.aio.runtime.db.orm.domain.bo.Condition;
 import com.aio.runtime.db.orm.domain.enums.ConditionEnum;
 import com.aio.runtime.db.orm.utils.CamelToSnakeUtils;
 import com.alibaba.fastjson.JSON;
-import com.kgo.flow.common.domain.page.KgoPage;
-import com.kgo.flow.common.domain.page.PageResult;
+import cn.aio1024.framework.basic.domain.page.KgoPage;
+import cn.aio1024.framework.basic.domain.page.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 

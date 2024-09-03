@@ -1,5 +1,7 @@
 package com.aio.runtime.log.service.lucene;
 
+import cn.aio1024.framework.basic.domain.page.KgoPage;
+import cn.aio1024.framework.basic.domain.page.PageResult;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
@@ -14,9 +16,6 @@ import com.aio.runtime.log.domain.AioLogVo;
 import com.aio.runtime.log.domain.QueryLogParams;
 import com.aio.runtime.log.service.AbstractAioLogService;
 import com.aio.runtime.record.log.domain.constants.MappingLogFieldConstant;
-import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
-import com.kgo.flow.common.domain.page.KgoPage;
-import com.kgo.flow.common.domain.page.PageResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
@@ -56,7 +55,7 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
     private AioLogAppendProperties logAppendProperties;
 
     // 项目工作目录
-    @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
+    @Value("${project.workspace.path}")
     private String projectWorkspace;
 
     private String getIndexName() {

@@ -1,5 +1,7 @@
 package com.aio.runtime.mappings.service.impl;
 
+import cn.aio1024.framework.basic.domain.page.KgoPage;
+import cn.aio1024.framework.basic.domain.page.PageResult;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
@@ -25,9 +27,6 @@ import com.aio.runtime.mappings.statistic.MappingVisitStatisticsUtils;
 import com.aio.runtime.record.log.controller.MappingLogController;
 import com.aio.runtime.subscribe.controller.SubscribeLogController;
 import com.aio.runtime.subscribe.log.SubscribeMarker;
-import com.kgo.flow.common.domain.constants.ProjectWorkSpaceConstants;
-import com.kgo.flow.common.domain.page.KgoPage;
-import com.kgo.flow.common.domain.page.PageResult;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -67,7 +66,7 @@ public class SqlLiteAioMappingServiceImpl implements IAioMappingService {
     @Autowired(required = false)
     private MappingsEndpoint mappingsEndpoint;
 
-    @Value(ProjectWorkSpaceConstants.CONFIG_PATH_SPEL)
+    @Value("${project.workspace.path}")
     private String projectWorkspace;
     private DataSource ds;
     private static final String TABLE_NAME = "aio_mapping";

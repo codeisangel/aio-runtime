@@ -2,7 +2,7 @@ package com.aio.runtime.log.level;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.aio.runtime.log.domain.SetLogLevelParams;
-import com.kgo.flow.common.domain.amis.AmisResult;
+import cn.aio1024.framework.basic.domain.amis.AmisResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
