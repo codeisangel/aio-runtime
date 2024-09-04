@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan({"com.aio.runtime.security"})
 @EnableConfigurationProperties(RuntimeSecurityProperties.class)
-@ConditionalOnProperty(prefix = "aio.runtime.security",name = "enable",havingValue = "true")
+@ConditionalOnProperty(prefix = "aio.runtime.security",name = "enable",havingValue = "true",matchIfMissing = true)
 public class RuntimeSecurityConfig {
 
     @Bean

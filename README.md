@@ -69,6 +69,27 @@ aio.runtime.security.password=jldfasfsfsdflsfjasfsdfjsjf
 /view/runtime
 ```
 
+## 第四步，添加日志追踪码
+
+```java
+@Slf4j
+@Configuration
+public class ServletWebInterceptorConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new TraceIdInterceptor()).addPathPatterns("/**");
+    }
+}
+```
+
+> servlet 中添加 `TraceIdInterceptor` 拦截器 ，拦截器会使用雪花算法标记线程 ，并且记录到日志中。效果如下图
+
+
+![img.png](img.png)
+
+
+
 
 ## 日志订阅使用方式
 
@@ -78,3 +99,13 @@ log.error(SubscribeMarker.getMarker("MappingsEndpoint"), "读取接口信息失�
 ```
 
 只需要在打印日志时，添加一个标签声明，控制台也可以通过这个标记查询这个标记的所有订阅日志。
+
+
+
+## 更新日志 
+
+### 1.1.3
+
+1. 添加日志追踪码拦截器
+2. 修改接口请求路径接口不一致，导致集成复杂问题
+3. 默认开启日志组件安全功能

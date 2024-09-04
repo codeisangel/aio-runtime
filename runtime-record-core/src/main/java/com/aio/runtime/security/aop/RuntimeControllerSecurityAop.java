@@ -25,8 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 public class RuntimeControllerSecurityAop {
     @Autowired
     private AioSecurityAdapter securityAdapter;
+    @Pointcut(
 
-    @Pointcut("execution(public * com.aio.runtime.beans.controller.IAioBeansController.*(..)) || " +
+            "execution(public * com.aio.runtime.beans.controller.IAioBeansController.*(..)) || " +
             "execution(public * com.aio.runtime.cache.controller.AioCacheManageController.*(..)) || " +
             "execution(public * com.aio.runtime.common.AioRuntimeCommonController.*(..))  || " +
             "execution(public * com.aio.runtime.environment.controller.AioEnvironmentController.*(..))  || " +
@@ -34,9 +35,9 @@ public class RuntimeControllerSecurityAop {
             "execution(public * com.aio.runtime.subscribe.controller.SubscribeLogController.*(..))  || " +
             "execution(public * com.aio.runtime.log.controller.AioLogController.*(..))  || " +
             "execution(public * com.aio.runtime.record.log.controller.MappingLogController.*(..))  || " +
-            "execution(public * com.aio.runtime.mappings.controller.AioMappingController.*(..))")
-    public void allMethodsPointcut() {
-    }
+            "execution(public * com.aio.runtime.mappings.controller.AioMappingController.*(..))" )
+
+    public void allMethodsPointcut(){}
 
 
     @Before("allMethodsPointcut()")
@@ -47,7 +48,7 @@ public class RuntimeControllerSecurityAop {
             token = request.getParameter("runtimeToken");
         }
         boolean verify = securityAdapter.verifyToken(token);
-        log.info("权限AOP拦截器 ： {}  token [ {} ] , 校验结果 ： {} ",request.getRequestURI() , token ,verify);
+        log.debug("权限AOP拦截器 ： {}  token [ {} ] , 校验结果 ： {} ",request.getRequestURI() , token ,verify);
         handleVerifyResult(verify);
     }
     private void handleVerifyResult(boolean verify){

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Slf4j
-@RequestMapping("/runtime/log/mapping/record")
+@RequestMapping("/runtime/aio/log/mapping/record")
 public class MappingLogController {
     @Autowired
     private MappingLogService mappingLogService;

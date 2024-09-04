@@ -1,8 +1,7 @@
 package com.guodun.aio.document.user.config;
 
-import com.guodun.aio.document.user.TraceIdInterceptor;
+import com.aio.runtime.common.interceptor.TraceIdInterceptor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -15,12 +14,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Slf4j
 @Configuration
 public class ServletWebInterceptorConfig implements WebMvcConfigurer {
-    @Autowired
-    private TraceIdInterceptor traceIdInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(traceIdInterceptor).addPathPatterns("/**");
-
+        registry.addInterceptor(new TraceIdInterceptor()).addPathPatterns("/**");
     }
 }
