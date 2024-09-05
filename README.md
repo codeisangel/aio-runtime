@@ -10,11 +10,11 @@
 <dependency>
     <groupId>cn.aio1024.runtime</groupId>
     <artifactId>runtime-record-spring-boot-starter</artifactId>
-    <version>1.1.2</version>
+    <version>1.1.3</version>
 </dependency>
 ```
 
-> 当前最新版本为 `1.1.2`
+> 当前最新版本为 `1.1.3`
 
 > 日志追踪需要依赖阿里的线程工具 `transmittable-thread-local` 日志追踪码与线程关联
 
@@ -47,7 +47,7 @@ aio.runtime.security.password=jldfasfsfsdflsfjasfsdfjsjf
 
 > `aio.runtime.security.username` 默认值为 admin 。 表示 登录的用户名
 
-> `aio.runtime.security.password` 默认值为 `guodun@2024`  登录密码。
+> `aio.runtime.security.password` 默认值为 `admin@1024`  登录密码。
 
 > `aio.runtime.security.enable` 表示启动默认的用户权限 , 默认值为 false ，表示不启动默认的权限
 

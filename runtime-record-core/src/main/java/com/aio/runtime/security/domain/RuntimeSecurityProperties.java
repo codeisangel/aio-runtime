@@ -12,6 +12,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "aio.runtime.security")
 public class RuntimeSecurityProperties {
     private String username = "admin";
-    private String password = "guodun@2024";
+    private String password = "admin@1024";
     private Boolean enable = false;
 }
