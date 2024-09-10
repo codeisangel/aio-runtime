@@ -34,12 +34,15 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author lzm
@@ -77,10 +80,47 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
     private Environment environmentContext;
 
     private Map<String,EnvironmentItemDictBo> environmentDictMap = new HashMap<>();
+    private void dealHtml()  {
+        URL html = ResourceUtil.getResource("templates/runtime/console/index.html");
+        String htmlContent = FileUtil.readUtf8String(html.getFile());
+        String replaceStr ="6176c7b460524356acd2a3d7eb174df9.js";
+        String regex = "6176c7b460524356acd2a3d7eb174df9.js\\?t=\\d{1,20}";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(htmlContent);
+        while (matcher.find()) {
+
+            String substring = StringUtils.substring(htmlContent, matcher.start(), matcher.end());
+            String newJsUrl = StrUtil.format("6176c7b460524356acd2a3d7eb174df9.js?t={}",System.currentTimeMillis());
+            htmlContent = StringUtils.replaceOnce(htmlContent, substring, newJsUrl);
+
+            FileUtil.writeUtf8String(htmlContent,html.getFile());
+            String factor = IdUtil.nanoId();
+            URL jsURL = ResourceUtil.getResource("templates/runtime/console/"+replaceStr);
+            String jsContent = StrUtil.format("window.aioSecretKey = '{}';",factor);
+            FileUtil.writeUtf8String(jsContent,jsURL.getFile());
+            log.info("项目启动已经重置index.html安全凭证，双因子认证启动成功。 动态安全因子 ： {} ",factor);
+
+        }
+    }
     @EventListener
     public void listenerApplicationReadyEvent(ApplicationReadyEvent event){
-        log.debug("应用已经准备就绪-事件 读取环境并存储入库 ： {} ", DateUtil.now());
+        String secretKey = IdUtil.fastSimpleUUID();
+        log.info("应用已经准备就绪-事件 读取环境并存储入库 ： {}  安全令牌 : {} ", DateUtil.now(),secretKey);
         visitUrl();
+        try {
+            dealHtml();
+        }catch (Exception e){
+            log.error("处理Index.html异常 ",e);
+        }
+
+
+
+
+//
+//        htmlContent = StringUtils.replaceOnce(htmlContent, "1598189409879916545", IdUtil.fastUUID());
+//        FileUtil.writeUtf8String(htmlContent,resource.getFile());
+//
+
         ThreadUtil.execute(new Runnable() {
             @Override
             public void run() {

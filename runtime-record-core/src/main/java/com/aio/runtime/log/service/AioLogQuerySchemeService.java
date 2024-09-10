@@ -73,7 +73,7 @@ public class AioLogQuerySchemeService extends AbstractAioSimpleMapper<AioLogPara
         hikariDataSource.setConnectionTimeout(10 * 60 * 1000);
         // 一个连接空闲状态的最大时长（毫秒），超时则被释放（retired），缺省:10分钟
         hikariDataSource.setIdleTimeout(10 * 60 * 1000);
-        hikariDataSource.setPoolName("Hikari-SQLLite-4-LOG-SCHEME");
+        hikariDataSource.setPoolName("Hikari-SQLLite-4-log-scheme");
         hikariDataSource.setConnectionTestQuery("SELECT 1");
         // 这里是SQLLite数据库，维护一条链接即刻，并非时排队
         hikariDataSource.setMinimumIdle(1);
