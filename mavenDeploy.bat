@@ -1,1 +1,1 @@
-mvn clean deploy  -DskipTests  -rf :runtime-record-servlet
+mvn clean deploy  -DskipTests

@@ -174,7 +174,7 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="时间" width="140" align="center"></el-table-column>
+      <el-table-column prop="createTime" label="时间" width="140" align="center" sortable sort-by="createTimestamp"></el-table-column>
       <el-table-column prop="traceId" label="追踪码" width="200" align="center"></el-table-column>
       <el-table-column label="内容" min-width="460">
         <template slot-scope="scope">
