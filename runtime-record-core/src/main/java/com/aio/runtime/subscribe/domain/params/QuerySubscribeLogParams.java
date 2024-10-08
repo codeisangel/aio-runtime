@@ -9,6 +9,7 @@ import lombok.Data;
  */
 @Data
 public class QuerySubscribeLogParams {
+    private String id;
     private String message;
     private String subscribeName;
     private String className;

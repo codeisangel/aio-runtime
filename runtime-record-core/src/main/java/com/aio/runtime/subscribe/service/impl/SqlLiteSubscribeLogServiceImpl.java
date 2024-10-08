@@ -15,6 +15,7 @@ import com.aio.runtime.subscribe.domain.SubscribeLogVo;
 import com.aio.runtime.subscribe.domain.enums.SubscibeHandleStatusEnum;
 import com.aio.runtime.subscribe.domain.params.QuerySubscribeLogParams;
 import com.aio.runtime.subscribe.domain.params.UpdateSubscribeLogStatusParams;
+import com.aio.runtime.subscribe.domain.properties.AioSubscribeProperties;
 import com.aio.runtime.subscribe.service.AbstractSubscribeLogService;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,10 @@ import java.util.List;
 @Service
 @Slf4j
 public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService {
+    public SqlLiteSubscribeLogServiceImpl(AioSubscribeProperties properties) {
+        super(properties);
+    }
+
     private static class SubscribeFields{
         public static final String ID = "id";
         public static final String CREATE_TIME = "create_time";
@@ -134,6 +139,10 @@ public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService 
             }
             if (ObjectUtil.isNotNull(params.getHandleStatus())){
                 where.set(SubscribeFields.HANDLE_STATUS,params.getHandleStatus());
+            }
+
+            if (StringUtils.isNotBlank(params.getId())){
+                where.set(SubscribeFields.ID,params.getId());
             }
 
             if (StringUtils.isNotBlank(params.getUserId())){

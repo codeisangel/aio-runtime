@@ -7,8 +7,7 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
     <name>aio-runtime-record</name>
-    <url>https://github.com/codeisangel/aio-runtime</url>
-    <description>系统运行记录</description>
+    <description>日志</description>
 
 
     <modules>
@@ -17,7 +16,7 @@
         <module>runtime-record-spring-boot-starter</module>
     </modules>
     <properties>
-        <revision>1.1.3</revision>
+        <revision>1.1.4</revision>
 
         <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
         <thread-local.version>2.11.5</thread-local.version>

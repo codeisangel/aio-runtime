@@ -107,12 +107,6 @@ public class SqlLiteAioEnvironmentServiceImpl implements IAioEnvironmentService 
         String secretKey = IdUtil.fastSimpleUUID();
         log.info("应用已经准备就绪-事件 读取环境并存储入库 ： {}  安全令牌 : {} ", DateUtil.now(),secretKey);
         visitUrl();
-        try {
-            dealHtml();
-        }catch (Exception e){
-            log.error("处理Index.html异常 ",e);
-        }
-
 
 
 

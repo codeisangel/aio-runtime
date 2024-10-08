@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.aio.runtime.record.log.RuntimeRecordConfig
-org.springframework.context.ApplicationListener = com.aio.runtime.record.log.AioRuntimeApplicationStartingEventListener
+org.springframework.context.ApplicationListener=com.aio.runtime.record.log.AioRuntimeApplicationStartingEventListener

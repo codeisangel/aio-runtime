@@ -192,6 +192,7 @@ export default {
     }
   },
   created() {
+    this.queryTable.id = this.$route.query.id
     this.initCreateTimeRangeDefault()
   },
   mounted() {

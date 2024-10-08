@@ -13,20 +13,16 @@ import java.util.Date;
 public class SubscribeLogBo {
     /**
      *
-     * 用户ID
-     * 企业ID
-     *
-     *
-     *
-     * 发生时间
-     *
-     *
-     *
-     *
      */
     private String id;
+    /**
+     * 用户ID
+     */
     private String userId;
     private String subscribeName;
+    /**
+     * 企业ID
+     */
     private String companyId;
     /**
      * 错误码

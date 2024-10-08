@@ -1,0 +1,40 @@
+{
+  "post": {
+    "zh_cn": {
+      "title": "订阅日志",
+      "content": [
+        [
+          {
+            "tag": "text",
+            "text": ""
+          }
+        ],
+        [
+          {
+            "tag": "text",
+            "text": ""
+          }
+        ],
+        [
+          {
+            "tag": "text",
+            "text": ""
+          }
+        ],
+        [
+          {
+            "tag": "text",
+            "text": ""
+          }
+        ]
+      ,[
+          {
+            "tag": "a",
+            "text": "请查看",
+            "href": "http://www.example.com/"
+          }
+        ]
+      ]
+    }
+  }
+}

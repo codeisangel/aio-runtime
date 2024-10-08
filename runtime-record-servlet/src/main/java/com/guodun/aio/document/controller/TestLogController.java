@@ -28,6 +28,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @RequestMapping("/test/log")
 public class TestLogController {
+    @PostMapping("subscribe")
+    public AmisResult crateSubscribeLog(@RequestParam String marker){
+        List<String> lines = FileUtil.readUtf8Lines("D:\\test\\随机文本\\random\\卫斯理系列@004蓝血人.txt");
+        int i = RandomUtil.randomInt(1, lines.size()-1);
+        SubscribeMarker subscribeMarker = SubscribeMarker.getMarker(marker);
+        log.error(subscribeMarker, "第 {} 行 {}",i,StringUtils.trim(lines.get(i)));
+
+        return AmisResult.successMsg("创建订阅日志");
+    }
     @PostMapping("create")
     public AmisResult crateSubscribes(@RequestParam Integer total,@RequestParam String level){
         List<String> lines = FileUtil.readUtf8Lines("D:\\test\\随机文本\\random\\卫斯理系列@004蓝血人.txt");
@@ -51,6 +60,11 @@ public class TestLogController {
             }
             if (count.addAndGet(1) > total) {
                 break;
+            }
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
             if (StringUtils.equalsIgnoreCase(level, Level.ERROR.name())){
                 log.error(marker, "第 {} 行 {}",i,StringUtils.trim(line));
