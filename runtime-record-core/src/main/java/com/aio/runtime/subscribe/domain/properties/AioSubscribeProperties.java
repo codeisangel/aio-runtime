@@ -18,5 +18,6 @@ import java.util.List;
 public class AioSubscribeProperties {
     public static final String PREFIX = "aio.runtime.log.subscribe";
     private SubscribeFeiShuProperties feishu;
-    private List<String> topics = new ArrayList<>();
+    private String detailAddress;
+    private List<String> markers = new ArrayList<>();
 }

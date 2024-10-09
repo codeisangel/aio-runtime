@@ -6,12 +6,15 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
+import cn.hutool.system.HostInfo;
+import cn.hutool.system.SystemUtil;
 import com.aio.runtime.subscribe.domain.SubscribeLogBo;
 import com.aio.runtime.subscribe.domain.properties.AioSubscribeProperties;
 import com.aio.runtime.subscribe.domain.properties.SubscribeFeiShuProperties;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
@@ -32,6 +35,8 @@ public abstract class AbstractSubscribeLogService implements SubscribeLogService
     public static void addRecord(SubscribeLogBo logBo){
         RECORD_QUEUE.add(logBo);
     }
+    @Value("${server.port:8080}")
+    private Integer port;
     private ScheduledExecutorService executorSubscribeLogService = Executors.newScheduledThreadPool(2);
     public AbstractSubscribeLogService(AioSubscribeProperties properties){
         this.subscribeProperties = properties;
@@ -82,7 +87,7 @@ public abstract class AbstractSubscribeLogService implements SubscribeLogService
             return;
         }
         // 如果订阅主题里面不包含当前主题就直接返回
-        if (!subscribeProperties.getTopics().contains(record.getSubscribeName())) {
+        if (!subscribeProperties.getMarkers().contains(record.getSubscribeName())) {
             return;
         }
         feiShuNotify(record);
@@ -101,6 +106,7 @@ public abstract class AbstractSubscribeLogService implements SubscribeLogService
             String legalText = StrUtil.format("发生时间 ：{} ", DateUtil.formatDateTime(record.getCreateTime()));
             JSONPath.set(content,"post.zh_cn.content[2][0].text",legalText);
 
+            JSONPath.set(content,"post.zh_cn.content[4][0].href",getUrl(record));
 
             JSONObject body = new JSONObject();
             body.put("msg_type","post");
@@ -114,7 +120,18 @@ public abstract class AbstractSubscribeLogService implements SubscribeLogService
             throw new RuntimeException(e);
         }
     }
-
+    private String getUrl(SubscribeLogBo record){
+        if (StringUtils.isNotBlank(subscribeProperties.getDetailAddress())){
+            return String.format("%s?id=%s",subscribeProperties.getDetailAddress(),record.getId());
+        }
+        HostInfo hostInfo = SystemUtil.getHostInfo();
+        if (ObjectUtil.isNull(hostInfo)){
+            return "";
+        }
+        String address = hostInfo.getAddress();
+        return StrUtil.format("http://{}:{}/view/runtime/index.html#/subscribe/logSubscribePage?id={}"
+                ,address,port,record.getId());
+    }
 
     public abstract void batchSave(List<SubscribeLogBo> recordBos);
 }

@@ -11,7 +11,7 @@
 <dependency>
     <groupId>cn.aio1024.runtime</groupId>
     <artifactId>runtime-record-spring-boot-starter</artifactId>
-    <version>1.1.3</version>
+    <version>1.1.4</version>
 </dependency>
 ```
 
@@ -33,7 +33,6 @@
 ```properties
 project.workspace.path=/home/guodun/workspace/electronic
 ```
-
 
 > 项目工作目录定义在基础框架底层包中，可以为日后模块化功能提供统一的项目工作目录配置。
 
@@ -63,6 +62,7 @@ aio.runtime.security.password=jldfasfsfsdflsfjasfsdfjsjf
 5. 接口查询。查询当前项目下的所有接口API。
 6. 日志查询与存储。可以保存查询方案，持久化。 日志存储使用 Lucene ,经过测试 200 万 日志每天,检索性能可以做到一秒以内。
 7. 日志级别查询，与日志级别设置。
+8. 日志消息推送。支持飞书机器人消息推送。
 
 访问地址 ：
 
@@ -104,6 +104,13 @@ log.error(SubscribeMarker.getMarker("MappingsEndpoint"), "读取接口信息失�
 
 
 ## 更新日志 
+
+### 1.1.4 
+
+1. 新增日志列表按照时间排序功能。
+2. 新增日志订阅通知功能。
+3. 解决页面加密安全bug。
+4. 
 
 ### 1.1.3
 

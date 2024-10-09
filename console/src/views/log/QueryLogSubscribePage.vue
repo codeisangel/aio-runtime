@@ -201,7 +201,7 @@ export default {
   methods: {
     initCreateTimeRangeDefault(){
       const date = new Date();
-      this.createTimeRange[0] = date.getTime() - (1000 * 60 * 60 * 24)
+      this.createTimeRange[0] = date.getTime() - (1000 * 60 * 60 * 48)
       this.createTimeRange[1] = date.getTime() + (1000 * 60 * 60)
 
     },

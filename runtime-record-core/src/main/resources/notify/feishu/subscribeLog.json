@@ -30,7 +30,7 @@
       ,[
           {
             "tag": "a",
-            "text": "请查看",
+            "text": "详情",
             "href": "http://www.example.com/"
           }
         ]
