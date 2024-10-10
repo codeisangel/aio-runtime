@@ -119,7 +119,7 @@
         </el-form-item>
         <el-form-item label="方法名" class="method-form-style">
           <el-select v-model="runBeanForm.method" @change="getMethodParamsInfo" clearable filterable placeholder="请选择只需执行的方法名">
-            <el-option v-for="(methodName) in runBeanForm.methods" :key="methodName" :label="methodName" :value="methodName"></el-option>
+            <el-option v-for="(methodItem) in runBeanForm.methods" :key="methodItem.methodDesc" :label="methodItem.methodDesc" :value="methodItem.methodDesc"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="方法参数描述">
@@ -148,16 +148,18 @@
         </template>
       </json-viewer>
     </el-dialog>
-
+    <run-bean-method-dialog ref="runBeanMethod" />
   </div>
 </template>
 
 <script>
 
 import {getBeanPageApi, getMethodListApi, getMethodParametersApi, runMethodApi} from "@/api/beanApi";
+import RunBeanMethodDialog from "@/views/beans/dialog/RunBeanMethodDialog.vue";
 
 
 export default {
+  components: {RunBeanMethodDialog},
   data() {
     return {
       queryTable: {
@@ -214,34 +216,24 @@ export default {
       })
     },
     getMethodParamsInfo(){
-      const params = {
-        className : this.runBeanForm.className,
-        method:this.runBeanForm.method
-      }
-      getMethodParametersApi(params).then(rsp => {
-        this.runParamsDesc = rsp.data
+      this.runBeanForm.methods.forEach(item => {
+        if (item.methodDesc === this.runBeanForm.method){
+          getMethodParametersApi(item).then(rsp => {
+            this.runParamsDesc = rsp.data
+          })
+        }
       })
     },
     openRunBeanDialogVisible(row){
-      this.runBeanForm = row
-      const params = {className : this.runBeanForm.className}
-      getMethodListApi(params).then(rsp => {
-        this.runBeanForm.methods = rsp.data
-        this.runBeanDialogVisible = true
-      })
+      this.$refs.runBeanMethod.openDialog(row)
+      // this.runBeanForm = row
+      // const params = {className : this.runBeanForm.className}
+      // getMethodListApi(params).then(rsp => {
+      //   this.runBeanForm.methods = rsp.data
+      //   this.runBeanDialogVisible = true
+      // })
     },
-    runBeanBtn(){
-      if (this.runBeanForm.params){
-        this.runBeanForm.parameters = JSON.parse(this.runBeanForm.params)
-      }
 
-      runMethodApi(this.runBeanForm).then(rsp => {
-         this.runResultObj = rsp.data
-         this.runBeanResultDialogVisible = true
-         this.$message.success(rsp.msg)
-
-      })
-    }
 
   }
 }

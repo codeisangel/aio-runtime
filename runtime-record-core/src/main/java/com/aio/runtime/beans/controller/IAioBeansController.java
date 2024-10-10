@@ -6,10 +6,9 @@ import cn.aio1024.framework.basic.domain.page.KgoPage;
 import cn.aio1024.framework.basic.domain.page.PageResult;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import com.aio.runtime.beans.domain.BeanMethodInfo;
 import com.aio.runtime.beans.domain.BeanMethodParameter;
-import com.aio.runtime.beans.domain.QueryBeanMethodInfoParams;
 import com.aio.runtime.beans.domain.QueryBeanParams;
 import com.aio.runtime.beans.domain.RunMethodParameter;
 import com.aio.runtime.beans.service.IAioBeansService;
@@ -20,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.math.BigDecimal;
@@ -51,55 +49,80 @@ public class IAioBeansController {
         }
         try {
             Class<?> beanClass = Class.forName(params.getClassName());
-            Set<String> methodNames = ReflectUtil.getMethodNames(beanClass);
-            return AmisResult.success(methodNames);
+            Method[] methods = beanClass.getMethods();
+            Set<BeanMethodInfo> methodList = new HashSet<>();
+            for (Method method : methods){
+                BeanMethodInfo methodInfo = new BeanMethodInfo();
+                methodInfo.setMethodName(method.getName());
+                methodInfo.setParameterTypes(method.getParameterTypes());
+                methodInfo.setClassName(params.getClassName());
+                methodInfo.setBeanName(params.getBeanName());
+
+                Parameter[] parameters = method.getParameters();
+                if (ObjectUtil.isEmpty(parameters)){
+                    methodInfo.setMethodDesc(String.format("%s ()",method.getName()));
+
+                }else {
+                    StringBuffer paramsDesc = new StringBuffer();
+                    for (int i = 0; i < parameters.length; i++) {
+                        if (i < (parameters.length-1)){
+                            paramsDesc.append(String.format("%s %s ,",parameters[i].getType().getName(),parameters[i].getName()));
+                        }else {
+                            paramsDesc.append(String.format("%s %s",parameters[i].getType().getName(),parameters[i].getName()));
+                        }
+                    }
+                    methodInfo.setMethodDesc(String.format("%s (%s)",method.getName(),paramsDesc.toString()));
+                }
+                methodList.add(methodInfo);
+            }
+
+            return AmisResult.success(methodList);
         }catch (Exception e){
             log.error("获取Bean所有方法异常。 异常类[ {} ] 异常信息[ {} ]  异常追踪 : {} ",e.getClass(),e.getMessage(),e.getStackTrace());
             return AmisResult.fail("未能获取Bean的方法");
         }
     }
-    @GetMapping("method/parameters")
+    @PostMapping("method/parameters")
     @AioSecurityVerify
-    public AmisResult getBeanMethodParameters(@ModelAttribute QueryBeanMethodInfoParams params){
+    public AmisResult getBeanMethodParameters(@RequestBody BeanMethodInfo params){
         if (StringUtils.isBlank(params.getClassName())){
             throw new IllegalArgumentException("className不能为空。");
         }
-        if (StringUtils.isBlank(params.getMethod())){
+        if (StringUtils.isBlank(params.getMethodName())){
             throw new IllegalArgumentException("方法名不能为空。");
         }
         try {
             Class<?> beanClass = Class.forName(params.getClassName());
-
-            Method method = ReflectUtil.getMethodByName(beanClass, params.getMethod());
+            Method method = beanClass.getMethod(params.getMethodName(), params.getParameterTypes());
             Parameter[] parameters = method.getParameters();
+            RunMethodParameter result = Convert.convert(RunMethodParameter.class, params);
             if (ObjectUtil.isEmpty(parameters)){
-                return AmisResult.success();
+                return AmisResult.success(result);
             }
-            List<BeanMethodParameter> parameterDescList = new ArrayList<>();
             for (Parameter parameter : parameters) {
                 BeanMethodParameter methodParameter = new BeanMethodParameter();
-                methodParameter.setName(parameter.getName());
                 methodParameter.setType(parameter.getType().getName());
                 methodParameter.setValue(parseParameter(parameter));
-                parameterDescList.add(methodParameter);
+                result.addParameter(parameter.getName(),methodParameter);
             }
-            return AmisResult.success(parameterDescList);
+
+            return AmisResult.success(result);
         }catch (Exception e){
             log.error("获取Bean所有方法异常。 异常类[ {} ] 异常信息[ {} ]  异常追踪 : {} ",e.getClass(),e.getMessage(),e.getStackTrace());
             return AmisResult.fail("未能获取Bean方法详情的方法");
         }
     }
     private Object basicTypeToDefaultValue(Class<?> type){
-        if (type.equals(Integer.class)){
+        if (type.equals(Integer.class) || type.equals(Long.class) || StringUtils.equalsAny(type.getName(),"int","long")){
             return 0;
         }
         if (type.equals(String.class)){
-            return " ";
+            return "";
         }
-        if (type.equals(Double.class)){
+        if (type.equals(Double.class)|| StringUtils.equalsAny(type.getName(),"Double","double")){
             return Double.valueOf("0.0");
         }
-        if (type.equals(Float.class)){
+        if (type.equals(Float.class) || StringUtils.equalsAny(type.getName(),"Float","float")){
             return Float.valueOf("0.0");
         }
         if (type.equals(BigDecimal.class)){
@@ -111,33 +134,11 @@ public class IAioBeansController {
         if (type.equals(Map.class)){
             return new HashMap<>();
         }
-        return null;
+        return new HashMap<>();
     }
     private Object parseParameter(Parameter parameter){
         Object defaultValue = basicTypeToDefaultValue(parameter.getType());
-        if (ObjectUtil.isNotNull(defaultValue)){
-            return defaultValue;
-        }
-        Map<String, Object> paramsMap = new HashMap<>();
-        Class<?> type = parameter.getType();
-        Field[] fields = type.getFields();
-        for (Field field : fields) {
-            Class<?> fieldType = field.getType();
-            Object fieldValue = basicTypeToDefaultValue(fieldType);
-            if (ObjectUtil.isNotNull(fieldValue)){
-                paramsMap.put(field.getName(), fieldValue);
-            } else {
-                Map<String, Object> sunParamsMap = new HashMap<>();
-                for (Field filedSun : fieldType.getFields()) {
-                    Object fieldSunValue = basicTypeToDefaultValue(filedSun.getType());
-                    sunParamsMap.put(fieldType.getName(), fieldSunValue);
-                }
-                paramsMap.put(field.getName(), sunParamsMap);
-            }
-
-        }
-        return paramsMap;
-
+        return defaultValue;
     }
     @PostMapping("method/run")
     @AioSecurityVerify
@@ -145,26 +146,30 @@ public class IAioBeansController {
         if (StringUtils.isBlank(params.getClassName())){
             throw new IllegalArgumentException("className不能为空。");
         }
-        if (StringUtils.isBlank(params.getMethod())){
+        if (StringUtils.isBlank(params.getBeanName())){
+            throw new IllegalArgumentException("beanName不能为空。");
+        }
+        if (StringUtils.isBlank(params.getMethodName())){
             throw new IllegalArgumentException("方法名不能为空。");
         }
+        log.info("方法执行参数 ： {} ",JSON.toJSONString(params));
         try {
             Object bean = SpringUtil.getBean(params.getBeanName());
             Class<?> beanClass = bean.getClass();
-            Method method = ReflectUtil.getMethodByName(beanClass, params.getMethod());
+            Method method = beanClass.getMethod(params.getMethodName(), params.getParameterTypes());
             Parameter[] methodParams = method.getParameters();
             Object[] parameters = new Object[methodParams.length];
             Integer index = 0;
             for (String paramName : params.getParameters().keySet()) {
                 Parameter methodParam = methodParams[index];
-                Object paramObj = params.getParameters().get(paramName);
-                Object valueObj = Convert.convert(methodParam.getType(), paramObj);
+                BeanMethodParameter methodParameter = params.getParameters().get(paramName);
+                Object valueObj = Convert.convert(methodParam.getType(), methodParameter.getValue());
                 parameters[index] = valueObj;
                 index++;
             }
-            log.info("执行bean[ {} ]的[ {} ]方法,参数 : {} ",params.getBeanName(),params.getMethod(), JSON.toJSONString(parameters));
+            log.info("执行bean[ {} ]的[ {} ]方法,参数 : {} ",params.getBeanName(),params.getMethodName(), JSON.toJSONString(parameters));
             Object invoke = method.invoke(bean, parameters);
-            log.info("执行bean[ {} ]的[ {} ]方法执行结果 ： {} ",params.getBeanName(),params.getMethod(),invoke);
+            log.info("执行bean[ {} ]的[ {} ]方法执行结果 ： {} ",params.getBeanName(),params.getMethodName(),invoke);
             return AmisResult.success(invoke);
         }catch (Exception e){
             log.error("获取Bean所有方法异常。 异常类[ {} ] 异常信息[ {} ]  异常追踪 : {} ",e.getClass(),e.getMessage(),e.getStackTrace());

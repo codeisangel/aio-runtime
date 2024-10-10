@@ -9,7 +9,6 @@ import lombok.Data;
  */
 @Data
 public class BeanMethodParameter {
-    private String name;
     private String type;
     private Object value;
 }

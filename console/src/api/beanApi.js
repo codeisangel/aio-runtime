@@ -18,8 +18,8 @@ export function getMethodListApi(data) {
 export function getMethodParametersApi(data) {
   return request({
     url: '/runtime/aio/bean/method/parameters',
-    method: 'get',
-    params:data
+    method: 'post',
+    data
   })
 }
 

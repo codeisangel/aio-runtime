@@ -16,7 +16,7 @@
         <module>runtime-record-spring-boot-starter</module>
     </modules>
     <properties>
-        <revision>1.1.4</revision>
+        <revision>1.1.5</revision>
 
         <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
         <thread-local.version>2.11.5</thread-local.version>

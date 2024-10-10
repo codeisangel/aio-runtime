@@ -5,17 +5,33 @@
 
 体验地址: http://119.163.197.219:13456/view/runtime 密码 ： admin /admin@1024
 
+
+
+# 功能模块
+
+1. 接口访问记录 。 接口访问记录会记录 接口地址，请求方式，请求参数，相应结果，请求人，请求人姓名，请求企业ID，请求企业名称，访问时间，追踪码，异常类，异常信息，异常堆栈信息等。
+2. 日志订阅。通过日志的Marker功能标记特定的日志，日志会自动存储，日志订阅模块可以查询和处理被标记的日志。
+3. 项目配置。可以查询当前spring boot 的所有配置信息。
+4. bean查询。查询当前项目的所以Spring bean。
+5. 接口查询。查询当前项目下的所有接口API。
+6. 日志查询与存储。可以保存查询方案，持久化。 日志存储使用 Lucene ,经过测试 200 万 日志每天,检索性能可以做到一秒以内。
+7. 日志级别查询，与日志级别设置。
+8. 日志消息推送。支持飞书机器人消息推送。
+9. 可以通过接口调用spring bean方法。可以帮助用户在服务运行时处理异常。
+
+
+
 ## 第一步 : Maven 引入依赖
 
 ```xml
 <dependency>
     <groupId>cn.aio1024.runtime</groupId>
     <artifactId>runtime-record-spring-boot-starter</artifactId>
-    <version>1.1.4</version>
+    <version>1.1.5</version>
 </dependency>
 ```
 
-> 当前最新版本为 `1.1.3`
+> 当前最新版本为 `1.1.5`
 
 > 日志追踪需要依赖阿里的线程工具 `transmittable-thread-local` 日志追踪码与线程关联
 
@@ -53,16 +69,6 @@ aio.runtime.security.password=jldfasfsfsdflsfjasfsdfjsjf
 
 后续版本会支持客户化账号密码登录
 
-# 功能模块
-
-1. 接口访问记录 。 接口访问记录会记录 接口地址，请求方式，请求参数，相应结果，请求人，请求人姓名，请求企业ID，请求企业名称，访问时间，追踪码，异常类，异常信息，异常堆栈信息等。
-2. 日志订阅。通过日志的Marker功能标记特定的日志，日志会自动存储，日志订阅模块可以查询和处理被标记的日志。
-3. 项目配置。可以查询当前spring boot 的所有配置信息。
-4. bean查询。查询当前项目的所以Spring bean
-5. 接口查询。查询当前项目下的所有接口API。
-6. 日志查询与存储。可以保存查询方案，持久化。 日志存储使用 Lucene ,经过测试 200 万 日志每天,检索性能可以做到一秒以内。
-7. 日志级别查询，与日志级别设置。
-8. 日志消息推送。支持飞书机器人消息推送。
 
 访问地址 ：
 
@@ -87,7 +93,7 @@ public class ServletWebInterceptorConfig implements WebMvcConfigurer {
 > servlet 中添加 `TraceIdInterceptor` 拦截器 ，拦截器会使用雪花算法标记线程 ，并且记录到日志中。效果如下图
 
 
-![img.png](img.png)
+![img.png](docs/imgs/img.png)
 
 
 
@@ -105,12 +111,15 @@ log.error(SubscribeMarker.getMarker("MappingsEndpoint"), "读取接口信息失�
 
 ## 更新日志 
 
+### 1.1.5
+
+1. 优化执行bean功能。方法重载导致的方法重名，参数构造难度高。
+
 ### 1.1.4 
 
 1. 新增日志列表按照时间排序功能。
 2. 新增日志订阅通知功能。
 3. 解决页面加密安全bug。
-4. 
 
 ### 1.1.3
 

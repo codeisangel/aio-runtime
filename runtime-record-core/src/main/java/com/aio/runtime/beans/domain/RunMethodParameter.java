@@ -11,10 +11,10 @@ import java.util.Map;
  * @date 2024/08/20
  */
 @Data
-public class RunMethodParameter {
-    private String beanName;
-    private String className;
-    private String method;
-    private Map<String,Object> parameters = new HashMap<>();
+public class RunMethodParameter extends BeanMethodInfo{
 
+    private Map<String,BeanMethodParameter> parameters = new HashMap<>();
+    public void addParameter(String key,BeanMethodParameter parameter){
+        parameters.put(key,parameter);
+    }
 }
