@@ -16,9 +16,11 @@ import com.aio.runtime.log.domain.AioLogVo;
 import com.aio.runtime.log.domain.QueryLogParams;
 import com.aio.runtime.log.service.AbstractAioLogService;
 import com.aio.runtime.record.log.domain.constants.MappingLogFieldConstant;
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -29,9 +31,11 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.NRTCachingDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
@@ -51,6 +55,44 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
     private static final String DAY_FORMAT = "yyyyMMdd";
     private static final String HOUR_FORMAT = "yyyyMMdd_HH";
 
+    private static class Format {
+        public static final String DAY = "yyyyMMdd";
+        public static final String HOUR = "yyyyMMdd_HH";
+
+        public static final String WEEK = "yyyyMM";
+    }
+
+    private static class Prefix {
+        public static final String HOUR = "aio_log_hour_";
+        public static final String DAY = "aio_log_day_";
+        public static final String WEEK = "aio_log_week_";
+    }
+
+    private Date getHourIndexTime(String fileName) {
+        if (!StringUtils.startsWith(fileName, Prefix.HOUR)) {
+            return null;
+        }
+        String dateStr = StringUtils.substring(fileName, Prefix.HOUR.length(), Prefix.HOUR.length() + Format.HOUR.length());
+        log.info("获取小时索引库 ： {} ", dateStr);
+        return DateUtil.parse(dateStr, Format.HOUR);
+    }
+    private Date getDayIndexTime(String fileName) {
+        if (!StringUtils.startsWith(fileName, Prefix.DAY)) {
+            return null;
+        }
+        String dateStr = StringUtils.substring(fileName, Prefix.DAY.length(), Prefix.DAY.length() + Format.DAY.length());
+        log.info("获取天索引库 ： {} ", dateStr);
+        return DateUtil.parse(dateStr, Format.DAY);
+    }
+    private Date getWeekIndexTime(String fileName) {
+        if (!StringUtils.startsWith(fileName, Prefix.WEEK)) {
+            return null;
+        }
+        String dateStr = StringUtils.substring(fileName, Prefix.WEEK.length(), Prefix.WEEK.length() + Format.WEEK.length());
+        log.info("获取周索引库 ： {} ", dateStr);
+        return DateUtil.parse(dateStr, Format.WEEK);
+    }
+
     @Autowired
     private AioLogAppendProperties logAppendProperties;
 
@@ -59,9 +101,9 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
     private String projectWorkspace;
 
     private String getIndexName() {
-        String indexName = StringUtils.equals(logAppendProperties.getIndexPeriod(),"hour")
-                ? StrUtil.format("aio_log_{}", DateUtil.format(new Date(), HOUR_FORMAT))
-                : StrUtil.format("aio_log_{}", DateUtil.format(new Date(), DAY_FORMAT));
+        String indexName = StringUtils.equals(logAppendProperties.getIndexPeriod(), "hour")
+                ? StrUtil.format("{}{}", Prefix.HOUR, DateUtil.format(new Date(), HOUR_FORMAT))
+                : StrUtil.format("{}{}", Prefix.DAY, DateUtil.format(new Date(), DAY_FORMAT));
         return indexName;
     }
 
@@ -96,6 +138,169 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
             docs.add(document);
         }
         return docs;
+    }
+
+
+
+    private void mergeIndex(Date date) {
+        String todayStr = DateUtil.format(date, DAY_FORMAT);
+        String indexPath = StrUtil.format("{}/{}/data/", projectWorkspace, LOG_CATALOGUE_NAME);
+        String targetPath = StrUtil.format("{}/{}/data/aio_log_merge_{}", projectWorkspace, LOG_CATALOGUE_NAME, todayStr);
+        if (FileUtil.exist(targetPath)) {
+            log.info("合并日志索引，合并日志文件[ {} ]已存在", targetPath);
+            return;
+        }
+
+        List<File> files = FileUtil.loopFiles(Paths.get(indexPath), 1, new FileFilter() {
+            @Override
+            public boolean accept(File logFile) {
+                return StringUtils.contains(logFile.getName(), todayStr) && (!StringUtils.contains(logFile.getName(), "_log_merge"));
+            }
+        });
+        if (files.isEmpty() || files.size() < 2) {
+            log.info("合并日志索引，未发现日志索引文件。");
+            return;
+        }
+        Set<String> fileNames = new HashSet<>();
+        for (File file : files) {
+            fileNames.add(file.getAbsolutePath());
+        }
+
+        try {
+            // 创建目标索引目录
+            Directory targetDir = FSDirectory.open(Paths.get(targetPath));
+            // 配置 IndexWriter
+            IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
+            IndexWriter writer = new IndexWriter(targetDir, config);
+
+            // 打开源索引目录
+            List<Directory> sourceDirList = new ArrayList<>();
+            for (String fileName : fileNames) {
+                FSDirectory directory = FSDirectory.open(Paths.get(fileName));
+                sourceDirList.add(directory);
+                IndexReader reader = DirectoryReader.open(directory);
+                int refCount = reader.numDocs();
+                log.info("获取日志[ {} ]数量 ： {} ", fileName, refCount);
+            }
+
+            // 合并索引
+            writer.addIndexes(sourceDirList.toArray(new Directory[sourceDirList.size()]));
+
+            // 提交更改并关闭 IndexWriter
+            writer.commit();
+            writer.close();
+
+            targetDir.close();
+            for (Directory directory : sourceDirList) {
+                directory.close();
+            }
+
+/*            for (File file : files) {
+                boolean del = FileUtil.del(file);
+                log.info("日志索引合并完成，删除索引库路径 ： {} ,删除结果 :[ {} ]",file.getName(),del);
+            }*/
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 每天执行一次周索引合并，并且删除合并前的索引文件
+     */
+    @Scheduled(cron = "* * 2 * * ? ")
+    private void mergeIndex4Week() {
+        Date now = new Date();
+
+        String indexPath = StrUtil.format("{}/{}/data/", projectWorkspace, LOG_CATALOGUE_NAME);
+        //
+        Map<Date, String> timeFileMap = new TreeMap<>();
+        List<File> files = FileUtil.loopFiles(Paths.get(indexPath), 1, new FileFilter() {
+            @Override
+            public boolean accept(File logFile) {
+                return (!StringUtils.contains(logFile.getName(), Prefix.WEEK));
+            }
+        });
+
+        if (files.isEmpty() || files.size() < 2) {
+            log.info("合并日志索引，未发现日志索引文件。");
+            return;
+        }
+
+        for (File file : files) {
+            if (StringUtils.startsWith(file.getName(), Prefix.WEEK)) {
+                Date dayTime = getWeekIndexTime(file.getName());
+                timeFileMap.put(dayTime, file.getAbsolutePath());
+            }else if (StringUtils.startsWith(file.getName(), Prefix.DAY)) {
+                Date dayTime = getDayIndexTime(file.getName());
+                timeFileMap.put(dayTime, file.getAbsolutePath());
+            }else if (StringUtils.startsWith(file.getName(), Prefix.HOUR)) {
+                Date dayTime = getHourIndexTime(file.getName());
+                timeFileMap.put(dayTime, file.getAbsolutePath());
+            }
+        }
+
+        Map<String, Set<String>> weekMergeMap = new HashMap<>();
+        for (Date date : timeFileMap.keySet()) {
+            if (DateUtil.betweenDay(now,date,true) < 2){
+                continue;
+            }
+            String month = DateUtil.format(date, Format.WEEK);
+            int weekOfMonth = DateUtil.weekOfMonth(date);
+            String targetPath = StrUtil.format("{}/{}/data/aio_log_week_{}_{}", projectWorkspace, LOG_CATALOGUE_NAME ,month ,weekOfMonth );
+            if (weekMergeMap.containsKey(targetPath)) {
+                weekMergeMap.get(targetPath).add(timeFileMap.get(date));
+            }else {
+                Set<String> sourcePathSet = new HashSet<>();
+                sourcePathSet.add(timeFileMap.get(date));
+                weekMergeMap.put(targetPath, sourcePathSet);
+            }
+        }
+
+        log.info("周索引合并配置 ： {} ", JSON.toJSONString(weekMergeMap));
+        for (String target : weekMergeMap.keySet()) {
+            mergeIndex(target, weekMergeMap.get(target));
+        }
+
+    }
+    private void mergeIndex(String targetPath, Set<String> sourcePathSet){
+        try {
+            // 创建目标索引目录
+            Directory targetDir = FSDirectory.open(Paths.get(targetPath));
+            // 配置 IndexWriter
+            IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
+            IndexWriter writer = new IndexWriter(targetDir, config);
+
+            // 打开源索引目录
+            List<Directory> sourceDirList = new ArrayList<>();
+            for (String fileName : sourcePathSet) {
+                FSDirectory directory = FSDirectory.open(Paths.get(fileName));
+                sourceDirList.add(directory);
+                IndexReader reader = DirectoryReader.open(directory);
+                int refCount = reader.numDocs();
+                log.info("获取日志[ {} ]数量 ： {} ", fileName, refCount);
+            }
+
+            // 合并索引
+            writer.addIndexes(sourceDirList.toArray(new Directory[sourceDirList.size()]));
+
+            // 提交更改并关闭 IndexWriter
+            writer.commit();
+            writer.close();
+
+            targetDir.close();
+            for (Directory directory : sourceDirList) {
+                directory.close();
+            }
+
+            for (String file : sourcePathSet) {
+                boolean del = FileUtil.del(file);
+                log.info("日志索引合并完成，删除索引库路径 ： {} ,删除结果 :[ {} ]",file,del);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
