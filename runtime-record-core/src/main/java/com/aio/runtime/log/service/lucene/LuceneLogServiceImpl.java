@@ -73,7 +73,6 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
             return null;
         }
         String dateStr = StringUtils.substring(fileName, Prefix.HOUR.length(), Prefix.HOUR.length() + Format.HOUR.length());
-        log.info("获取小时索引库 ： {} ", dateStr);
         return DateUtil.parse(dateStr, Format.HOUR);
     }
     private Date getDayIndexTime(String fileName) {
@@ -81,7 +80,6 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
             return null;
         }
         String dateStr = StringUtils.substring(fileName, Prefix.DAY.length(), Prefix.DAY.length() + Format.DAY.length());
-        log.info("获取天索引库 ： {} ", dateStr);
         return DateUtil.parse(dateStr, Format.DAY);
     }
     private Date getWeekIndexTime(String fileName) {
@@ -89,7 +87,6 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
             return null;
         }
         String dateStr = StringUtils.substring(fileName, Prefix.WEEK.length(), Prefix.WEEK.length() + Format.WEEK.length());
-        log.info("获取周索引库 ： {} ", dateStr);
         return DateUtil.parse(dateStr, Format.WEEK);
     }
 
@@ -208,7 +205,7 @@ public class LuceneLogServiceImpl extends AbstractAioLogService {
     /**
      * 每天执行一次周索引合并，并且删除合并前的索引文件
      */
-    @Scheduled(cron = "* * 2 * * ? ")
+    @Scheduled(cron = "0 0 2 * * ? ")
     private void mergeIndex4Week() {
         Date now = new Date();
 

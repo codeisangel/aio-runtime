@@ -6,6 +6,7 @@
          <el-result icon="success" :title="runtimeVersion" subTitle="当前系统版本">
          </el-result>
        </el-card>
+
      </el-col>
 
      <el-col :span="6">
@@ -65,7 +66,6 @@ import {
   getSystemStartingTimeApi
 } from "@/api/runtimeApi";
 import MemoryLine from "@/views/dashboard/components/memoryLine.vue";
-
 
 
 export default {

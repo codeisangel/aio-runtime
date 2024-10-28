@@ -2,13 +2,15 @@ package com.aio.runtime.reported.domain.params;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author lzm
  * @desc 错误上报参数
  * @date 2024/10/17
  */
 @Data
-public class AddErrorParams {
+public class QueryErrorParams {
     /**
      * 错误级别，info (信息),warn （警告）,error （错误）,fatal（灾难）
      */
@@ -34,7 +36,7 @@ public class AddErrorParams {
      */
     private String token;
     /**
-     * 终端。web ，PC ， Android ，ios，微信小程序 ，H5 ，微信公众号 等
+     * 终端。web，PC ， Android，ios，微信小程序，H5，微信公众号 等
      */
     private String terminal;
     /**
@@ -49,4 +51,9 @@ public class AddErrorParams {
      * 备注
      */
     private String remark;
+
+    private List<String> keywords;
+
+    private Long createToTime;
+    private Long createFromTime;
 }

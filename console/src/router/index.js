@@ -110,6 +110,21 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/reported',
+    component: Layout,
+    redirect: '/reported/queryReported',
+    name: 'reported',
+    meta: {title: '上报', icon: 'el-icon-s-help'},
+    children: [
+      {
+        path: 'queryReported',
+        name: 'QueryReported',
+        component: () => import('@/views/reported/queryReportedPage.vue'),
+        meta: {title: '上报记录', icon: 'error'}
+      }
+    ]
+  },
+  {
     path: '/user',
     component: Layout,
     redirect: '/user/info',

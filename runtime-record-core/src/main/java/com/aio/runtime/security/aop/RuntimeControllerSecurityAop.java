@@ -35,6 +35,7 @@ public class RuntimeControllerSecurityAop {
             "execution(public * com.aio.runtime.subscribe.controller.SubscribeLogController.*(..))  || " +
             "execution(public * com.aio.runtime.log.controller.AioLogController.*(..))  || " +
             "execution(public * com.aio.runtime.record.log.controller.MappingLogController.*(..))  || " +
+            "execution(public * com.aio.runtime.reported.controller.ErrorReportedController.getErrorReportedPage(..))  || " +
             "execution(public * com.aio.runtime.mappings.controller.AioMappingController.*(..))" )
 
     public void allMethodsPointcut(){}

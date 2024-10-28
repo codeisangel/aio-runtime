@@ -1,12 +1,14 @@
 package com.aio.runtime.reported.controller;
 
 import cn.aio1024.framework.basic.domain.amis.AmisResult;
+import cn.aio1024.framework.basic.domain.page.KgoPage;
+import cn.aio1024.framework.basic.domain.page.PageResult;
 import com.aio.runtime.reported.domain.params.AddErrorParams;
+import com.aio.runtime.reported.domain.params.QueryErrorParams;
+import com.aio.runtime.reported.service.ErrorReportedService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author lzm
@@ -17,9 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequestMapping("/runtime/aio/error/reported")
 public class ErrorReportedController {
+    @Autowired
+    private ErrorReportedService errorReportedService;
     @PostMapping()
     public AmisResult addErrorReported(@RequestBody AddErrorParams params){
-        log.info("错误上报 ： {} ",params);
+        errorReportedService.addError(params);
         return AmisResult.success();
+    }
+    @PostMapping("page")
+    public AmisResult getErrorReportedPage(@RequestBody QueryErrorParams params , @ModelAttribute KgoPage page){
+        PageResult pageResult = errorReportedService.getPage(params,page);
+        return AmisResult.success(pageResult);
     }
 }

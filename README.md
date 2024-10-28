@@ -27,11 +27,11 @@
 <dependency>
     <groupId>cn.aio1024.runtime</groupId>
     <artifactId>runtime-record-spring-boot-starter</artifactId>
-    <version>1.1.5</version>
+    <version>1.1.7</version>
 </dependency>
 ```
 
-> 当前最新版本为 `1.1.5`
+> 当前最新版本为 `1.1.7`
 
 > 日志追踪需要依赖阿里的线程工具 `transmittable-thread-local` 日志追踪码与线程关联
 
@@ -111,9 +111,17 @@ log.error(SubscribeMarker.getMarker("MappingsEndpoint"), "读取接口信息失�
 
 ## 更新日志 
 
+### 1.1.7 
+1. 添加异常信息收集功能。可用于前端的异常上报。
+2. 修改日志索引合规则。 按照周合并索引库
+
+### 1.1.6
+1. 解决日志模块索引文件太多导致的内存溢出问题。添加了日志索引合并功能
+
 ### 1.1.5
 
 1. 优化执行bean功能。方法重载导致的方法重名，参数构造难度高。
+2. 添加飞书机器人日志订阅通知
 
 ### 1.1.4 
 
