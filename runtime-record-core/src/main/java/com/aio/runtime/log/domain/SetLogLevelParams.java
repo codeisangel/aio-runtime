@@ -1,7 +1,6 @@
 package com.aio.runtime.log.domain;
 
 import lombok.Data;
-import org.springframework.boot.logging.LogLevel;
 
 /**
  * @author lzm
@@ -11,6 +10,6 @@ import org.springframework.boot.logging.LogLevel;
 @Data
 public class SetLogLevelParams {
     private String name;
-    private LogLevel configuredLevel;
-    private LogLevel effectiveLevel;
+    private String configuredLevel;
+    private String effectiveLevel;
 }

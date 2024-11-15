@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.logging.LoggersEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggerConfiguration;
 import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +53,7 @@ public class AIoLogLevelController {
     }
     @PutMapping
     public AmisResult setLogLevel(@RequestBody SetLogLevelParams log){
-        loggersEndpoint.configureLogLevel(log.getName(), log.getConfiguredLevel());
+        loggersEndpoint.configureLogLevel(log.getName(), LogLevel.valueOf(log.getConfiguredLevel()));
         return AmisResult.successMsg("设置日志级别成功");
     }
 }

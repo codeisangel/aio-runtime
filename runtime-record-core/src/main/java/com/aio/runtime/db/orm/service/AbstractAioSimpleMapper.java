@@ -237,7 +237,6 @@ public abstract class AbstractAioSimpleMapper<T> {
 
     private void createTable() {
 
-
         StringBuffer sql = new StringBuffer();
         sql.append(String.format("CREATE TABLE '%s' (", tableName));
         sql.append(" 'id' text NOT NULL,");

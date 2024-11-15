@@ -111,6 +111,10 @@ log.error(SubscribeMarker.getMarker("MappingsEndpoint"), "读取接口信息失�
 
 ## 更新日志 
 
+### 1.1.8
+
+1. 修改更新日志级别接口bug
+
 ### 1.1.7 
 1. 添加异常信息收集功能。可用于前端的异常上报。
 2. 修改日志索引合规则。 按照周合并索引库
