@@ -24,7 +24,6 @@ public class MappingRecordBo {
     private String companyId;
     private String companyName;
 
-
     private String mappingClass;
     private String mappingMethod;
     private List<String> paramsClass;

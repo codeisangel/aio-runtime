@@ -54,12 +54,17 @@ export const constantRoutes = [
     name: 'Example',
     meta: {title: '运行记录管理', icon: 'el-icon-s-help'},
     children: [
-
       {
         path: 'apiRecordPage',
         name: 'apiRecordPage',
         component: () => import('@/views/mapping/QueryMappingLogPage.vue'),
         meta: {title: '接口访问记录', icon: 'el-icon-tickets'}
+      },
+      {
+        path: 'businessTrace',
+        name: 'BusinessTrace',
+        component: () => import('@/views/trace/BusinessTrace.vue'),
+        meta: {title: '业务跟踪', icon: 'el-icon-tickets'}
       }
     ]
   },
