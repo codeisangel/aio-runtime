@@ -85,7 +85,7 @@
       <el-table-column prop="type" label="错误类型" width="200" align="center" />
       <el-table-column prop="level" label="错误级别" width="100" align="center" />
       <el-table-column prop="terminal" label="所属终端" width="200" align="center" />
-      <el-table-column prop="platform" label="所属平台" mni-width="120" align="center" />
+      <el-table-column prop="platform" label="所属平台" width="120" align="center" />
       <el-table-column prop="createTime" label="时间" width="140" align="center" sortable sort-by="createTimestamp" />
       <el-table-column label="操作" width="100" align="center">
         <template slot-scope="scope">

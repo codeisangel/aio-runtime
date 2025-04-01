@@ -1,5 +1,8 @@
 package com.guodun.aio.document.config;
 
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.guodun.aio.document.domain.TestCacheConstants;
 import com.guodun.security.common.constant.cache.CacheConstant;
@@ -20,6 +23,13 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @Slf4j
 public class CacheTestConfig {
+
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        return interceptor;
+    }
 
     @Bean(name =  TestCacheConstants.FORM_FIELD_MAP)
     public CacheManager formFieldCaffeineCache(){

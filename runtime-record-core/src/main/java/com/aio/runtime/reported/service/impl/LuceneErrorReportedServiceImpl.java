@@ -12,6 +12,8 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.aio.runtime.log.domain.AioLogBo;
 import com.aio.runtime.record.log.domain.constants.MappingLogFieldConstant;
+import com.aio.runtime.reported.ErrorReportedConfig;
+import com.aio.runtime.reported.domain.ErrorReportedProperties;
 import com.aio.runtime.reported.domain.dao.ErrorReportDo;
 import com.aio.runtime.reported.domain.params.QueryErrorParams;
 import com.aio.runtime.reported.domain.vo.ErrorReportVo;
@@ -27,6 +29,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.NRTCachingDirectory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -45,6 +49,8 @@ import java.util.List;
  */
 @Service
 @Slf4j
+@ConditionalOnBean(ErrorReportedConfig.class)
+@ConditionalOnProperty(prefix = ErrorReportedProperties.PREFIX, value = "scheme", havingValue = "lucene")
 public class LuceneErrorReportedServiceImpl extends AbstractErrorReportedServiceImpl {
     @Value("${project.workspace.path}")
     private String projectWorkspace;
