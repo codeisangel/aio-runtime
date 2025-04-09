@@ -13,6 +13,7 @@ import com.aio.runtime.subscribe.domain.properties.AioSubscribeProperties;
 import com.aio.runtime.subscribe.domain.properties.SubscribeFeiShuProperties;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -28,16 +29,22 @@ import java.util.concurrent.*;
  * @desc 订阅日志服务抽象类
  * @date 2024/07/24
  */
+@Slf4j
 public abstract class AbstractSubscribeLogService implements SubscribeLogService {
+    private final static Integer QUEUE_SIZE = 10000;
     private final AioSubscribeProperties subscribeProperties;
     private boolean notifyEnable = false;
-    private static BlockingQueue<SubscribeLogBo> RECORD_QUEUE = new LinkedBlockingQueue<>(10000);;
+    private static BlockingQueue<SubscribeLogBo> RECORD_QUEUE = new LinkedBlockingQueue<>(QUEUE_SIZE);
     public static void addRecord(SubscribeLogBo logBo){
+        if (RECORD_QUEUE.size() >= QUEUE_SIZE) {
+            log.error("订阅日志队列超出限制，将丢失本次订阅的日志： {} ",logBo);
+            return;
+        }
         RECORD_QUEUE.add(logBo);
     }
     @Value("${server.port:8080}")
     private Integer port;
-    private ScheduledExecutorService executorSubscribeLogService = Executors.newScheduledThreadPool(2);
+    private ScheduledExecutorService executorSubscribeLogService = Executors.newScheduledThreadPool(1);
     public AbstractSubscribeLogService(AioSubscribeProperties properties){
         this.subscribeProperties = properties;
         judgeStartNotify();
@@ -46,6 +53,7 @@ public abstract class AbstractSubscribeLogService implements SubscribeLogService
             batchNotify(recordBos);
             batchSave(recordBos);
         };
+        // 延迟30秒，每10秒执行一次清空队列的任务
         executorSubscribeLogService.scheduleAtFixedRate(task, 30, 10, TimeUnit.SECONDS);
     }
     private List<SubscribeLogBo> drainTo() {

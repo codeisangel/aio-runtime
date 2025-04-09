@@ -37,6 +37,7 @@ public class SubscribeErrorLogAppender extends UnsynchronizedAppenderBase<ILoggi
             return;
         }
 
+
         if (marker instanceof SubscribeMarker){
 
             StackTraceElement source = event.getCallerData()[0];

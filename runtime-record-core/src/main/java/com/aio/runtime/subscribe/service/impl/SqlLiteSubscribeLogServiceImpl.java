@@ -21,6 +21,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -37,6 +38,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
+@ConditionalOnProperty(prefix = AioSubscribeProperties.PREFIX,name = "scheme",havingValue = "sqlLite")
 public class SqlLiteSubscribeLogServiceImpl extends AbstractSubscribeLogService {
     public SqlLiteSubscribeLogServiceImpl(AioSubscribeProperties properties) {
         super(properties);

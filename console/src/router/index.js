@@ -130,6 +130,27 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/system',
+    component: Layout,
+    redirect: '/system/errorCode',
+    name: 'system',
+    meta: {title: '系统管理', icon: 'el-icon-s-help'},
+    children: [
+      {
+        path: 'errorCode',
+        name: 'errorCode',
+        component: () => import('@/views/system/error/errorCodePage.vue'),
+        meta: {title: '错误码', icon: 'error-code'}
+      },
+      {
+        path: 'config',
+        name: 'config',
+        component: () => import('@/views/system/error/errorCodePage.vue'),
+        meta: {title: '系统配置', icon: 'config'}
+      }
+    ]
+  },
+  {
     path: '/user',
     component: Layout,
     redirect: '/user/info',
